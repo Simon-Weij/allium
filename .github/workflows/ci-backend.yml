@@ -38,7 +38,6 @@ jobs:
         with:
           go-version-file: go.mod
       - run: go install mvdan.cc/gofumpt@latest
-      - run: sqlc generate
       - run: test -z "$(gofumpt -l .)"
   govet:
     runs-on: ubuntu-latest
