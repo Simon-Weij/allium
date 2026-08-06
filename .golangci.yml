@@ -6,3 +6,6 @@ linters:
     exhaustruct:
       include:
         - '^github\.com/Simon-Weij/allium(/.*)?\..+$'
+    errcheck:
+      exclude-functions:
+        - (io.Closer).Close
