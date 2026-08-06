@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    pull_policy: build
+    env_file:
+      - .env
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+
