@@ -1,0 +1,12 @@
+github.com/go-chi/chi/v5 v5.3.1 h1:3j4HZLGZQ3JpMCrPJF/Jl3mYJfWLKBfNJ6quurUGCf8=
+github.com/go-chi/chi/v5 v5.3.1/go.mod h1:R+tYY2hNuVUUjxoPtqUdgBqevM9s9njzkTLutVsOCto=
+github.com/goccy/go-yaml v1.19.2 h1:PmFC1S6h8ljIz6gMRBopkjP1TVT7xuwrButHID66PoM=
+github.com/goccy/go-yaml v1.19.2/go.mod h1:XBurs7gK8ATbW4ZPGKgcbrY1Br56PdM69F7LkFRi1kA=
+github.com/oaswrap/spec v0.5.2 h1:gTS3rfN4ILylm9Lb5vXGgUZDU0SKNwSo50PTKKBLOYs=
+github.com/oaswrap/spec v0.5.2/go.mod h1:Nhujx0ByH1JcyQjjNfCS7XpibCcVVdBk+Zi6balxJmg=
+github.com/oaswrap/spec-ui v0.2.1 h1:FDqXeIHxsYymw+MgqmC+vqAW/GRrA/2L52IF53paioM=
+github.com/oaswrap/spec-ui v0.2.1/go.mod h1:D8EnD6zbYJ3q65wdltw6QHXfw+nut5XwSSA1xtlSEQQ=
+github.com/oaswrap/spec/adapter/chiopenapi v0.5.2 h1:qptbcHdF26a/JkxU30kxLBk+vRMESwzcjhQgsEOhSC0=
+github.com/oaswrap/spec/adapter/chiopenapi v0.5.2/go.mod h1:iwayBykysuu4KRy/Du17XvC/H+YDFe9XoyxcPnAOa2c=
+github.com/supersonic-app/go-subsonic v0.0.0-20260416152144-7a5f505a273c h1:wms3FvahSfcnacW2rs9L+vzJR8FmTE5xTrRgf3+k3eQ=
+github.com/supersonic-app/go-subsonic v0.0.0-20260416152144-7a5f505a273c/go.mod h1:ClhAgC2qobwH19D6kdwULLYSHlOmldDGkdu2G2Z0Ijo=
