@@ -1,0 +1,8 @@
+version: "2"
+linters:
+  enable:
+    - exhaustruct
+  settings:
+    exhaustruct:
+      include:
+        - '^github\.com/Simon-Weij/allium(/.*)?\..+$'

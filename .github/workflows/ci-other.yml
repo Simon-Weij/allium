@@ -1,0 +1,30 @@
+name: other
+on:
+  push:
+  pull_request:
+jobs:
+  format-yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go install github.com/google/yamlfmt/cmd/yamlfmt@latest
+      - run: yamlfmt -lint .
+  format-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go install github.com/reteps/dockerfmt@latest
+      - run: dockerfmt -c Dockerfile
+  lint-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
