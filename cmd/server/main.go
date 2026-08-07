@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -11,12 +12,16 @@ import (
 
 	"github.com/Simon-Weij/allium/internal/config"
 	"github.com/Simon-Weij/allium/internal/handlers"
+	"github.com/Simon-Weij/allium/internal/middleware"
 )
 
 func main() {
 	cfg := config.NewConfig()
 
 	router := chi.NewRouter()
+
+	router.Use(middleware.RequireApiKey(cfg))
+
 	r := chiopenapi.NewRouter(router,
 		option.WithOpenAPIVersion(openapi.Version320),
 		option.WithTitle(cfg.Name),
@@ -35,6 +40,8 @@ func main() {
 			option.Request(new(handlers.LicenseResponse)),
 		)
 	})
+
+	slog.Info("starting app...")
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
