@@ -25,10 +25,14 @@ func main() {
 	)
 
 	r.Route("/rest", func(r chiopenapi.Router) {
-		pingHandler := handlers.NewPingHandler(cfg)
-		r.Get("/ping", pingHandler.HandlePing).With(
+		systemHandler := handlers.NewSystemHandler(cfg)
+		r.Get("/ping", systemHandler.HandlePing).With(
 			option.Summary("Ping"),
 			option.Request(new(handlers.SubsonicResponse)),
+		)
+		r.Get("/getLicense", systemHandler.HandleGetLicense).With(
+			option.Summary("Get the license"),
+			option.Request(new(handlers.LicenseResponse)),
 		)
 	})
 

@@ -6,6 +6,9 @@ linters:
     exhaustruct:
       include:
         - '^github\.com/Simon-Weij/allium(/.*)?\..+$'
+      exclude:
+        - '.*\.SubsonicResponse$'
+        - '.*\.SubsonicResponseBody$'
     errcheck:
       exclude-functions:
         - (io.Closer).Close
