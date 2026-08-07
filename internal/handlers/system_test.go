@@ -8,21 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Simon-Weij/allium/internal/config"
 	"github.com/stretchr/testify/assert"
 )
-
-func setupTestingConfig(t *testing.T) config.Config {
-	t.Helper()
-
-	cfg := config.Config{
-		Name:    "allium",
-		Version: "0.1.0",
-		ApiKey:  "irrelevant",
-	}
-
-	return cfg
-}
 
 func TestPing(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/rest/ping", nil)
@@ -65,7 +52,7 @@ func TestLicense(t *testing.T) {
 	assert.NoError(t, err)
 
 	expectedRes := NewEmptyResponse(cfg)
-	expectedRes.License = &License{
+	expectedRes.SubsonicResponse.License = &License{
 		Valid:          true,
 		Email:          "irrelevant@example.com",
 		LicenseExpires: &licenseExpiry,

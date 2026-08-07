@@ -27,7 +27,7 @@ func (h SystemHandler) HandlePing(w http.ResponseWriter, r *http.Request) {
 func (h SystemHandler) HandleGetLicense(w http.ResponseWriter, r *http.Request) {
 	licenseExpiry := time.Date(2222, 1, 1, 1, 1, 1, 1, time.UTC)
 	res := NewEmptyResponse(h.cfg)
-	res.License = &License{
+	res.SubsonicResponse.License = &License{
 		Valid:          true,
 		Email:          "irrelevant@example.com",
 		LicenseExpires: &licenseExpiry,
