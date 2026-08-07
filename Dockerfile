@@ -13,10 +13,9 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     go build -trimpath -ldflags="-s -w" -o /output/allium ./cmd/server
 
-FROM gcr.io/distroless/static-debian13
+FROM gcr.io/distroless/static-debian13:nonroot
 
 WORKDIR /app
-USER nonroot
 
 COPY --from=build /output/allium /app/allium
 

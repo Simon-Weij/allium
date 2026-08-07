@@ -7,17 +7,21 @@ import (
 	"github.com/Simon-Weij/allium/internal/config"
 )
 
-type SubsonicResponseBody struct {
-	Status        string `json:"status"`
-	Version       string `json:"version"`
-	Type          string `json:"type"`
-	ServerVersion string `json:"serverVersion"`
-	OpenSubsonic  bool   `json:"openSubsonic"`
-}
+type (
+	SubsonicResponseBody struct {
+		Status        string `json:"status"`
+		Version       string `json:"version"`
+		Type          string `json:"type"`
+		ServerVersion string `json:"serverVersion"`
+		OpenSubsonic  bool   `json:"openSubsonic"`
+	}
 
-type SubsonicResponse struct {
-	Body SubsonicResponseBody `json:"subsonic-response"`
-}
+	SubsonicResponse struct {
+		Body SubsonicResponseBody `json:"subsonic-response"`
+	}
+
+	Generic401Response struct{}
+)
 
 func NewSubsonicResponse(cfg config.Config) SubsonicResponse {
 	return SubsonicResponse{
