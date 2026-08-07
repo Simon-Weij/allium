@@ -39,11 +39,9 @@ func TestPing(t *testing.T) {
 	data, err := io.ReadAll(res.Body)
 	assert.NoError(t, err)
 
-	expected := SubsonicResponse{
-		Body: NewSubsonicResponse(cfg),
-	}
+	expectedRes := NewEmptyResponse(cfg)
 
-	expectedJSON, err := json.Marshal(expected)
+	expectedJSON, err := json.Marshal(expectedRes)
 	assert.NoError(t, err)
 
 	assert.JSONEq(t, string(expectedJSON), string(data))
@@ -66,17 +64,15 @@ func TestLicense(t *testing.T) {
 	data, err := io.ReadAll(res.Body)
 	assert.NoError(t, err)
 
-	expected := LicenseResponse{
-		SubsonicResponseBody: NewSubsonicResponse(cfg),
-		License: License{
-			Valid:          true,
-			Email:          "irrelevant@example.com",
-			LicenseExpires: licenseExpiry,
-			TrialExpires:   licenseExpiry,
-		},
+	expectedRes := NewEmptyResponse(cfg)
+	expectedRes.License = &License{
+		Valid:          true,
+		Email:          "irrelevant@example.com",
+		LicenseExpires: &licenseExpiry,
+		TrialExpires:   &licenseExpiry,
 	}
 
-	expectedJSON, err := json.Marshal(expected)
+	expectedJSON, err := json.Marshal(expectedRes)
 	assert.NoError(t, err)
 
 	assert.JSONEq(t, string(expectedJSON), string(data))

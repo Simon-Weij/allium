@@ -20,20 +20,19 @@ func NewSystemHandler(cfg config.Config) SystemHandler {
 }
 
 func (h SystemHandler) HandlePing(w http.ResponseWriter, r *http.Request) {
-	WriteJSON(w, http.StatusOK, SubsonicResponse{
-		Body: NewSubsonicResponse(h.cfg),
-	})
+	res := NewEmptyResponse(h.cfg)
+	WriteJSON(w, http.StatusOK, res)
 }
 
 func (h SystemHandler) HandleGetLicense(w http.ResponseWriter, r *http.Request) {
 	licenseExpiry := time.Date(2222, 1, 1, 1, 1, 1, 1, time.UTC)
-	WriteJSON(w, http.StatusOK, LicenseResponse{
-		SubsonicResponseBody: NewSubsonicResponse(h.cfg),
-		License: License{
-			Valid:          true,
-			Email:          "irrelevant@example.com",
-			LicenseExpires: licenseExpiry,
-			TrialExpires:   licenseExpiry,
-		},
-	})
+	res := NewEmptyResponse(h.cfg)
+	res.License = &License{
+		Valid:          true,
+		Email:          "irrelevant@example.com",
+		LicenseExpires: &licenseExpiry,
+		TrialExpires:   &licenseExpiry,
+	}
+
+	WriteJSON(w, http.StatusOK, res)
 }
