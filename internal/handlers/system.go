@@ -36,3 +36,10 @@ func (h SystemHandler) HandleGetLicense(w http.ResponseWriter, r *http.Request) 
 
 	WriteJSON(w, http.StatusOK, res)
 }
+
+// TODO: stop returning placeholders
+func (h SystemHandler) HandleGetOpenSubsonicExtensions(w http.ResponseWriter, r *http.Request) {
+	res := NewEmptyResponse(h.cfg)
+	res.SubsonicResponse.OpenSubSonicExtensions = &[]OpenSubSonicExtension{}
+	WriteJSON(w, http.StatusOK, res)
+}
