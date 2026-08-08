@@ -16,6 +16,7 @@ func NewUserManagementHandler(cfg config.Config) UserManagementHandler {
 	}
 }
 
+// TODO: stop returning placeholders
 func (h UserManagementHandler) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 	res := NewEmptyResponse(h.cfg)
 	res.SubsonicResponse.User = &User{

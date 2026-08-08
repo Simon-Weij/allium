@@ -16,6 +16,7 @@ func NewBrowsingHandler(cfg config.Config) BrowsingHandler {
 	}
 }
 
+// TODO: stop returning placeholders
 func (h BrowsingHandler) HandleGetMusicFolders(w http.ResponseWriter, r *http.Request) {
 	res := NewEmptyResponse(h.cfg)
 	res.SubsonicResponse.MusicFolders = &MusicFolders{
