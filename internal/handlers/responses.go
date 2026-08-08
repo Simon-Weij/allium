@@ -80,9 +80,9 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 	return SubsonicResponseWrapper{
 		SubsonicResponse: Subsonic{
 			Status:        "ok",
-			Version:       cfg.Version,
-			Type:          cfg.Name,
-			ServerVersion: cfg.Version,
+			Version:       config.Version,
+			Type:          config.Name,
+			ServerVersion: config.Version,
 			OpenSubsonic:  true,
 
 			License:      nil,

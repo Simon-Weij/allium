@@ -20,8 +20,6 @@ func token(password, salt string) string {
 
 func TestAuthenticate(t *testing.T) {
 	cfg := config.Config{
-		Name:     "allium",
-		Version:  "0.1.0",
 		Username: "alice",
 		Password: "secret",
 	}
