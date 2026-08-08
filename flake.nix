@@ -14,6 +14,7 @@
           golangci-lint
           gofumpt
           just
+          act
         ];
       };
     });

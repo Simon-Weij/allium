@@ -26,6 +26,7 @@ func main() {
 		systemHandler := handlers.NewSystemHandler(*cfg)
 		r.Get("/ping.view", systemHandler.HandlePing)
 		r.Get("/getLicense.view", systemHandler.HandleGetLicense)
+		r.Get("/getOpenSubsonicExtensions.view", systemHandler.HandleGetOpenSubsonicExtensions)
 
 		userManagementHandler := handlers.NewUserManagementHandler(*cfg)
 		r.Get("/getUser.view", userManagementHandler.HandleGetUser)

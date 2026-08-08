@@ -14,15 +14,16 @@ type (
 	}
 
 	Subsonic struct {
-		Status        string        `json:"status"`
-		Version       string        `json:"version"`
-		Type          string        `json:"type"`
-		ServerVersion string        `json:"serverVersion"`
-		OpenSubsonic  bool          `json:"openSubsonic"`
-		License       *License      `json:"license,omitempty"`
-		MusicFolders  *MusicFolders `json:"musicFolders,omitempty"`
-		User          *User         `json:"user,omitempty"`
-		Error         *Error        `json:"error,omitempty"`
+		Status                 string                   `json:"status"`
+		Version                string                   `json:"version"`
+		Type                   string                   `json:"type"`
+		ServerVersion          string                   `json:"serverVersion"`
+		OpenSubsonic           bool                     `json:"openSubsonic"`
+		License                *License                 `json:"license,omitempty"`
+		MusicFolders           *MusicFolders            `json:"musicFolders,omitempty"`
+		User                   *User                    `json:"user,omitempty"`
+		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
+		Error                  *Error                   `json:"error,omitempty"`
 	}
 
 	Error struct {
@@ -35,6 +36,11 @@ type (
 		Email          string     `json:"email,omitempty"`
 		LicenseExpires *time.Time `json:"licenseExpires,omitempty"`
 		TrialExpires   *time.Time `json:"trialExpires,omitempty"`
+	}
+
+	OpenSubSonicExtension struct {
+		Name    string
+		Version []int
 	}
 
 	User struct {
@@ -85,10 +91,12 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			ServerVersion: config.Version,
 			OpenSubsonic:  true,
 
-			License:      nil,
-			MusicFolders: nil,
-			User:         nil,
-			Error:        nil,
+			License:                nil,
+			MusicFolders:           nil,
+			User:                   nil,
+			OpenSubSonicExtensions: nil,
+
+			Error: nil,
 		},
 	}
 }
