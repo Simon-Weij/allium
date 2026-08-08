@@ -23,6 +23,7 @@ type (
 		MusicFolders           *MusicFolders            `json:"musicFolders,omitempty"`
 		User                   *User                    `json:"user,omitempty"`
 		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
+		JukeboxPlaylist        *JukeboxPlaylist         `json:"jukeboxPlaylist"`
 		Error                  *Error                   `json:"error,omitempty"`
 	}
 
@@ -57,6 +58,41 @@ type (
 		StreamRole        bool   `json:"streamRole"`
 		JukeboxRole       bool   `json:"jukeboxRole"`
 		ShareRole         bool   `json:"shareRole"`
+	}
+
+	JukeboxPlaylist struct {
+		CurrentIndex int                   `json:"currentIndex"`
+		Playing      bool                  `json:"playing"`
+		Gain         float32               `json:"gain"`
+		Position     int                   `json:"position"`
+		Entry        *JukeboxPlaylistEntry `json:"entry,omitempty"`
+	}
+
+	JukeboxPlaylistEntry struct {
+		Id           string `json:"id"`
+		Parent       string `json:"parent"`
+		Title        string `json:"title"`
+		IsDir        bool   `json:"isDir"`
+		IsVideo      bool   `json:"isVideo"`
+		Type         string `json:"type"`
+		AlbumId      string `json:"albumId"`
+		Album        string `json:"album"`
+		ArtistId     string `json:"artistId"`
+		Artist       string `json:"artist"`
+		CoverArt     string `json:"coverArt"`
+		Duration     int    `json:"duration"`
+		BitRate      int    `json:"bitRate"`
+		BitDepth     int    `json:"bitDepth"`
+		SamplingRate int    `json:"samplingRate"`
+		ChannelCount int    `json:"channelCount"`
+		Track        int    `json:"track"`
+		Year         int    `json:"year"`
+		Genre        string `json:"genre"`
+		Size         int    `json:"size"`
+		DiscNumber   int    `json:"discNumber"`
+		Suffix       string `json:"suffix"`
+		ContentType  string `json:"contentType"`
+		Path         string `json:"path"`
 	}
 
 	MusicFolders struct {

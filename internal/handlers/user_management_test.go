@@ -11,7 +11,7 @@ import (
 )
 
 func TestHandleGetUser(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/rest/getUser", nil)
+	req := httptest.NewRequest(http.MethodGet, "/rest/getUser.view", nil)
 	w := httptest.NewRecorder()
 
 	cfg := setupTestingConfig(t)

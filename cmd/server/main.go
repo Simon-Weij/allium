@@ -30,6 +30,10 @@ func main() {
 
 		userManagementHandler := handlers.NewUserManagementHandler(*cfg)
 		r.Get("/getUser.view", userManagementHandler.HandleGetUser)
+
+		jukeboxHandler := handlers.NewJukeboxHandler(*cfg)
+		r.HandleFunc("/jukeboxControl.view", jukeboxHandler.HandleJukeboxStatus)
+		r.Get("/jukeboxControl.view", jukeboxHandler.HandleJukeboxPlaylist)
 	})
 
 	slog.Info("starting app...")

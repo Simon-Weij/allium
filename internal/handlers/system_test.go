@@ -12,7 +12,7 @@ import (
 )
 
 func TestPing(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/rest/ping", nil)
+	req := httptest.NewRequest(http.MethodGet, "/rest/ping.view", nil)
 	w := httptest.NewRecorder()
 
 	cfg := setupTestingConfig(t)
@@ -37,7 +37,7 @@ func TestPing(t *testing.T) {
 func TestLicense(t *testing.T) {
 	licenseExpiry := time.Date(2222, 1, 1, 1, 1, 1, 1, time.UTC)
 
-	req := httptest.NewRequest(http.MethodGet, "/rest/getLicense", nil)
+	req := httptest.NewRequest(http.MethodGet, "/rest/getLicense.view", nil)
 	w := httptest.NewRecorder()
 
 	cfg := setupTestingConfig(t)
@@ -66,7 +66,7 @@ func TestLicense(t *testing.T) {
 }
 
 func TestHandleGetOpenSubSonicExtensions(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/rest/getOpenSubsonicExtensions", nil)
+	req := httptest.NewRequest(http.MethodGet, "/rest/getOpenSubsonicExtensions.view", nil)
 	w := httptest.NewRecorder()
 
 	cfg := setupTestingConfig(t)
