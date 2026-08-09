@@ -29,7 +29,7 @@ func (s Server) HandleJukeboxPlaylist(w http.ResponseWriter, r *http.Request) {
 		Playing:      false,
 		Gain:         0.5,
 		Position:     67,
-		Entry: &JukeboxPlaylistEntry{
+		Entry: &Song{
 			Id:           "300000116",
 			Parent:       "200000021",
 			Title:        "Test",

@@ -27,6 +27,7 @@ type (
 		AlbumList2             *AlbumList2              `json:"albumList2,omitempty"`
 		Genres                 *[]Genre                 `json:"genres,omitempty"`
 		Playlists              *[]Playlist              `json:"playlists,omitempty"`
+		Album                  *Album                   `json:"album,omitempty"`
 		Error                  *Error                   `json:"error,omitempty"`
 	}
 
@@ -64,14 +65,14 @@ type (
 	}
 
 	JukeboxPlaylist struct {
-		CurrentIndex int                   `json:"currentIndex"`
-		Playing      bool                  `json:"playing"`
-		Gain         float32               `json:"gain"`
-		Position     int                   `json:"position"`
-		Entry        *JukeboxPlaylistEntry `json:"entry,omitempty"`
+		CurrentIndex int     `json:"currentIndex"`
+		Playing      bool    `json:"playing"`
+		Gain         float32 `json:"gain"`
+		Position     int     `json:"position"`
+		Entry        *Song   `json:"entry,omitempty"`
 	}
 
-	JukeboxPlaylistEntry struct {
+	Song struct {
 		Id           string `json:"id"`
 		Parent       string `json:"parent"`
 		Title        string `json:"title"`
@@ -108,10 +109,10 @@ type (
 	}
 
 	AlbumList2 struct {
-		Album []Album `json:"album"`
+		Album []AlbumList2Album `json:"album"`
 	}
 
-	Album struct {
+	AlbumList2Album struct {
 		Id        string `json:"id"`
 		Album     string `json:"album"`
 		Title     string `json:"title"`
@@ -125,6 +126,25 @@ type (
 		Artist    string `json:"artist"`
 		Year      int    `json:"year"`
 		Genre     string `json:"genre"`
+	}
+
+	Album struct {
+		Id        string `json:"id"`
+		Parent    string `json:"parent"`
+		Album     string `json:"album"`
+		Title     string `json:"title"`
+		Name      string `json:"name"`
+		IsDir     bool   `json:"isDir"`
+		CoverArt  string `json:"coverArt"`
+		SongCount int    `json:"songCount"`
+		Created   string `json:"created"`
+		Duration  int    `json:"duration"`
+		PlayCount int    `json:"playCount"`
+		ArtistId  string `json:"artistId"`
+		Artist    string `json:"artist"`
+		Year      int    `json:"year"`
+		Genre     string `json:"genre"`
+		Song      []Song `json:"song"`
 	}
 
 	Genre struct {
@@ -175,6 +195,7 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			AlbumList2:             nil,
 			Genres:                 nil,
 			Playlists:              nil,
+			Album:                  nil,
 
 			Error: nil,
 		},

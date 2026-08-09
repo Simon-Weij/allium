@@ -8,7 +8,7 @@ import (
 func (s Server) HandleGetAlbumList2(w http.ResponseWriter, r *http.Request) {
 	res := NewEmptyResponse(s.cfg)
 	res.SubsonicResponse.AlbumList2 = &AlbumList2{
-		Album: []Album{
+		Album: []AlbumList2Album{
 			{
 				Id:        "200000021",
 				Album:     "Forget and Remember",

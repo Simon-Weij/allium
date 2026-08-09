@@ -10,7 +10,7 @@ func TestGetAlbumList2(t *testing.T) {
 	server := NewServer(cfg)
 	res := NewEmptyResponse(cfg)
 	res.SubsonicResponse.AlbumList2 = &AlbumList2{
-		Album: []Album{
+		Album: []AlbumList2Album{
 			{
 				Id:        "200000021",
 				Album:     "Forget and Remember",
