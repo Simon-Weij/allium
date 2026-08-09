@@ -6,7 +6,6 @@ import (
 	"crypto/md5"
 	"crypto/subtle"
 	"encoding/hex"
-	"log/slog"
 	"net/http"
 
 	"github.com/Simon-Weij/allium/internal/config"
@@ -48,7 +47,6 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 				handlers.WriteError(w, http.StatusUnauthorized, cfg, 40, "Wrong username or password")
 				return
 			}
-			slog.Info("successfully logged " + username + " in")
 
 			next.ServeHTTP(w, r)
 		})

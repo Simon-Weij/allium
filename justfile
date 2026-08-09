@@ -11,3 +11,9 @@ vet:
     go vet ./...
 tidy:
     go mod tidy
+pre-commit:
+    just test
+    just lint
+    just format
+    just vet
+    just tidy

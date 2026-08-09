@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"net/http"
+	"testing"
 )
 
-// TODO: stop returning placeholders
-func (s Server) HandleGetAlbumList2(w http.ResponseWriter, r *http.Request) {
-	res := NewEmptyResponse(s.cfg)
+func TestGetAlbumList2(t *testing.T) {
+	cfg := setupTestingConfig(t)
+	server := NewServer(cfg)
+	res := NewEmptyResponse(cfg)
 	res.SubsonicResponse.AlbumList2 = &AlbumList2{
 		Album: []Album{
 			{
@@ -26,5 +28,12 @@ func (s Server) HandleGetAlbumList2(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 	}
-	WriteJSON(w, http.StatusOK, res)
+
+	assertJSONResponse(
+		t,
+		http.MethodGet,
+		"/rest/getAlbumList2.view",
+		server.HandleGetAlbumList2,
+		res,
+	)
 }

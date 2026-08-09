@@ -18,22 +18,24 @@ func main() {
 		panic(err)
 	}
 
+	server := handlers.NewServer(*cfg)
+
 	r := chi.NewRouter()
 	r.Use(middleware.WithLogging)
 	r.Use(middleware.Authenticate(*cfg))
 
 	r.Route("/rest", func(r chi.Router) {
-		systemHandler := handlers.NewSystemHandler(*cfg)
-		r.Get("/ping.view", systemHandler.HandlePing)
-		r.Get("/getLicense.view", systemHandler.HandleGetLicense)
-		r.Get("/getOpenSubsonicExtensions.view", systemHandler.HandleGetOpenSubsonicExtensions)
+		// System
+		r.Get("/ping.view", server.HandlePing)
+		r.Get("/getLicense.view", server.HandleGetLicense)
+		r.Get("/getOpenSubsonicExtensions.view", server.HandleGetOpenSubsonicExtensions)
 
-		userManagementHandler := handlers.NewUserManagementHandler(*cfg)
-		r.Get("/getUser.view", userManagementHandler.HandleGetUser)
+		// User management
+		r.Get("/getUser.view", server.HandleGetUser)
 
-		jukeboxHandler := handlers.NewJukeboxHandler(*cfg)
-		r.HandleFunc("/jukeboxControl.view", jukeboxHandler.HandleJukeboxStatus)
-		r.Get("/jukeboxControl.view", jukeboxHandler.HandleJukeboxPlaylist)
+		// Jukebox
+		r.HandleFunc("/jukeboxControl.view", server.HandleJukeboxStatus)
+		r.Get("/jukeboxControl.view", server.HandleJukeboxPlaylist)
 	})
 
 	slog.Info("starting app...")

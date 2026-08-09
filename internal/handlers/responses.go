@@ -153,6 +153,7 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			User:                   nil,
 			OpenSubSonicExtensions: nil,
 			JukeboxPlaylist:        nil,
+			AlbumList2:             nil,
 
 			Error: nil,
 		},

@@ -2,27 +2,15 @@ package handlers
 
 import (
 	"net/http"
-
-	"github.com/Simon-Weij/allium/internal/config"
 )
 
-type JukeboxHandler struct {
-	cfg config.Config
-}
-
-func NewJukeboxHandler(cfg config.Config) JukeboxHandler {
-	return JukeboxHandler{
-		cfg: cfg,
-	}
-}
-
 // TODO: stop returning placeholders
-func (h JukeboxHandler) HandleJukeboxStatus(w http.ResponseWriter, r *http.Request) {
+func (s Server) HandleJukeboxStatus(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		http.NotFound(w, r)
 		return
 	}
-	res := NewEmptyResponse(h.cfg)
+	res := NewEmptyResponse(s.cfg)
 	res.SubsonicResponse.JukeboxPlaylist = &JukeboxPlaylist{
 		CurrentIndex: 1,
 		Playing:      false,
@@ -34,8 +22,8 @@ func (h JukeboxHandler) HandleJukeboxStatus(w http.ResponseWriter, r *http.Reque
 }
 
 // TODO: stop returning placeholders
-func (h JukeboxHandler) HandleJukeboxPlaylist(w http.ResponseWriter, r *http.Request) {
-	res := NewEmptyResponse(h.cfg)
+func (s Server) HandleJukeboxPlaylist(w http.ResponseWriter, r *http.Request) {
+	res := NewEmptyResponse(s.cfg)
 	res.SubsonicResponse.JukeboxPlaylist = &JukeboxPlaylist{
 		CurrentIndex: 1,
 		Playing:      false,

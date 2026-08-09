@@ -3,30 +3,16 @@ package handlers
 import (
 	"net/http"
 	"time"
-
-	"github.com/Simon-Weij/allium/internal/config"
 )
 
-type (
-	SystemHandler struct {
-		cfg config.Config
-	}
-)
-
-func NewSystemHandler(cfg config.Config) SystemHandler {
-	return SystemHandler{
-		cfg: cfg,
-	}
-}
-
-func (h SystemHandler) HandlePing(w http.ResponseWriter, r *http.Request) {
-	res := NewEmptyResponse(h.cfg)
+func (s Server) HandlePing(w http.ResponseWriter, r *http.Request) {
+	res := NewEmptyResponse(s.cfg)
 	WriteJSON(w, http.StatusOK, res)
 }
 
-func (h SystemHandler) HandleGetLicense(w http.ResponseWriter, r *http.Request) {
+func (s Server) HandleGetLicense(w http.ResponseWriter, r *http.Request) {
 	licenseExpiry := time.Date(2222, 1, 1, 1, 1, 1, 1, time.UTC)
-	res := NewEmptyResponse(h.cfg)
+	res := NewEmptyResponse(s.cfg)
 	res.SubsonicResponse.License = &License{
 		Valid:          true,
 		Email:          "irrelevant@example.com",
@@ -38,8 +24,8 @@ func (h SystemHandler) HandleGetLicense(w http.ResponseWriter, r *http.Request) 
 }
 
 // TODO: stop returning placeholders
-func (h SystemHandler) HandleGetOpenSubsonicExtensions(w http.ResponseWriter, r *http.Request) {
-	res := NewEmptyResponse(h.cfg)
+func (s Server) HandleGetOpenSubsonicExtensions(w http.ResponseWriter, r *http.Request) {
+	res := NewEmptyResponse(s.cfg)
 	res.SubsonicResponse.OpenSubSonicExtensions = &[]OpenSubSonicExtension{}
 	WriteJSON(w, http.StatusOK, res)
 }

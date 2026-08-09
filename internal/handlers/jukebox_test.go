@@ -1,32 +1,16 @@
 package handlers
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
-	"net/http/httptest"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestHandleJukeboxStatus(t *testing.T) {
-	req := httptest.NewRequest(http.MethodPost, "/rest/jukeboxControl.view", nil)
-	w := httptest.NewRecorder()
-
 	cfg := setupTestingConfig(t)
+	server := NewServer(cfg)
+	res := NewEmptyResponse(cfg)
 
-	jukeboxHandler := NewJukeboxHandler(cfg)
-	jukeboxHandler.HandleJukeboxStatus(w, req)
-
-	res := w.Result()
-	defer res.Body.Close()
-
-	data, err := io.ReadAll(res.Body)
-	assert.NoError(t, err)
-
-	expectedRes := NewEmptyResponse(cfg)
-	expectedRes.SubsonicResponse.JukeboxPlaylist = &JukeboxPlaylist{
+	res.SubsonicResponse.JukeboxPlaylist = &JukeboxPlaylist{
 		CurrentIndex: 1,
 		Playing:      false,
 		Gain:         0.5,
@@ -34,29 +18,21 @@ func TestHandleJukeboxStatus(t *testing.T) {
 		Entry:        nil,
 	}
 
-	expectedJSON, err := json.Marshal(expectedRes)
-	assert.NoError(t, err)
-
-	assert.JSONEq(t, string(expectedJSON), string(data))
+	assertJSONResponse(
+		t,
+		http.MethodPost,
+		"/rest/jukeboxControl.view",
+		server.HandleJukeboxStatus,
+		res,
+	)
 }
 
 func TestHandleJukeboxPlaylist(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/rest/jukeboxControl.view", nil)
-	w := httptest.NewRecorder()
-
 	cfg := setupTestingConfig(t)
+	server := NewServer(cfg)
+	res := NewEmptyResponse(cfg)
 
-	jukeboxHandler := NewJukeboxHandler(cfg)
-	jukeboxHandler.HandleJukeboxPlaylist(w, req)
-
-	res := w.Result()
-	defer res.Body.Close()
-
-	data, err := io.ReadAll(res.Body)
-	assert.NoError(t, err)
-
-	expectedRes := NewEmptyResponse(cfg)
-	expectedRes.SubsonicResponse.JukeboxPlaylist = &JukeboxPlaylist{
+	res.SubsonicResponse.JukeboxPlaylist = &JukeboxPlaylist{
 		CurrentIndex: 1,
 		Playing:      false,
 		Gain:         0.5,
@@ -89,8 +65,11 @@ func TestHandleJukeboxPlaylist(t *testing.T) {
 		},
 	}
 
-	expectedJSON, err := json.Marshal(expectedRes)
-	assert.NoError(t, err)
-
-	assert.JSONEq(t, string(expectedJSON), string(data))
+	assertJSONResponse(
+		t,
+		http.MethodGet,
+		"/rest/jukeboxControl.view",
+		server.HandleJukeboxPlaylist,
+		res,
+	)
 }

@@ -1,90 +1,59 @@
 package handlers
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestPing(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/rest/ping.view", nil)
-	w := httptest.NewRecorder()
-
 	cfg := setupTestingConfig(t)
+	server := NewServer(cfg)
+	res := NewEmptyResponse(cfg)
 
-	systemHandler := NewSystemHandler(cfg)
-	systemHandler.HandlePing(w, req)
-
-	res := w.Result()
-	defer res.Body.Close()
-
-	data, err := io.ReadAll(res.Body)
-	assert.NoError(t, err)
-
-	expectedRes := NewEmptyResponse(cfg)
-
-	expectedJSON, err := json.Marshal(expectedRes)
-	assert.NoError(t, err)
-
-	assert.JSONEq(t, string(expectedJSON), string(data))
+	assertJSONResponse(
+		t,
+		http.MethodGet,
+		"/rest/ping.view",
+		server.HandlePing,
+		res,
+	)
 }
 
 func TestLicense(t *testing.T) {
-	licenseExpiry := time.Date(2222, 1, 1, 1, 1, 1, 1, time.UTC)
-
-	req := httptest.NewRequest(http.MethodGet, "/rest/getLicense.view", nil)
-	w := httptest.NewRecorder()
-
 	cfg := setupTestingConfig(t)
+	server := NewServer(cfg)
+	res := NewEmptyResponse(cfg)
 
-	systemHandler := NewSystemHandler(cfg)
-	systemHandler.HandleGetLicense(w, req)
-
-	res := w.Result()
-	defer res.Body.Close()
-
-	data, err := io.ReadAll(res.Body)
-	assert.NoError(t, err)
-
-	expectedRes := NewEmptyResponse(cfg)
-	expectedRes.SubsonicResponse.License = &License{
+	licenseExpiry := time.Date(2222, 1, 1, 1, 1, 1, 1, time.UTC)
+	res.SubsonicResponse.License = &License{
 		Valid:          true,
 		Email:          "irrelevant@example.com",
 		LicenseExpires: &licenseExpiry,
 		TrialExpires:   &licenseExpiry,
 	}
 
-	expectedJSON, err := json.Marshal(expectedRes)
-	assert.NoError(t, err)
-
-	assert.JSONEq(t, string(expectedJSON), string(data))
+	assertJSONResponse(
+		t,
+		http.MethodGet,
+		"/rest/getLicense.view",
+		server.HandleGetLicense,
+		res,
+	)
 }
 
 func TestHandleGetOpenSubSonicExtensions(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/rest/getOpenSubsonicExtensions.view", nil)
-	w := httptest.NewRecorder()
-
 	cfg := setupTestingConfig(t)
+	server := NewServer(cfg)
+	res := NewEmptyResponse(cfg)
 
-	SystemHandler := NewSystemHandler(cfg)
-	SystemHandler.HandleGetOpenSubsonicExtensions(w, req)
+	res.SubsonicResponse.OpenSubSonicExtensions = &[]OpenSubSonicExtension{}
 
-	res := w.Result()
-	defer res.Body.Close()
-
-	data, err := io.ReadAll(res.Body)
-	assert.NoError(t, err)
-
-	expectedRes := NewEmptyResponse(cfg)
-	expectedRes.SubsonicResponse.OpenSubSonicExtensions = &[]OpenSubSonicExtension{}
-
-	expectedJSON, err := json.Marshal(expectedRes)
-	assert.NoError(t, err)
-
-	assert.JSONEq(t, string(expectedJSON), string(data))
+	assertJSONResponse(
+		t,
+		http.MethodGet,
+		"/rest/getOpenSubsonicExtensions",
+		server.HandleGetOpenSubsonicExtensions,
+		res,
+	)
 }
