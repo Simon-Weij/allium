@@ -33,9 +33,19 @@ func main() {
 		// User management
 		r.Get("/getUser.view", server.HandleGetUser)
 
+		// Browsing
+		r.Get("/getMusicFolders.view", server.HandleGetMusicFolders)
+		r.Get("/getGenres.view", server.HandleGetGenres)
+
+		// Playlists
+		r.Get("/getPlaylists.view", server.HandleGetPlaylists)
+
 		// Jukebox
 		r.HandleFunc("/jukeboxControl.view", server.HandleJukeboxStatus)
 		r.Get("/jukeboxControl.view", server.HandleJukeboxPlaylist)
+
+		// Lists
+		r.Get("/getAlbumList2.view", server.HandleGetAlbumList2)
 	})
 
 	slog.Info("starting app...")
