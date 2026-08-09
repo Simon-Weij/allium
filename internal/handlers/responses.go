@@ -24,6 +24,7 @@ type (
 		User                   *User                    `json:"user,omitempty"`
 		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
 		JukeboxPlaylist        *JukeboxPlaylist         `json:"jukeboxPlaylist"`
+		AlbumList2             *AlbumList2              `json:"albumList2"`
 		Error                  *Error                   `json:"error,omitempty"`
 	}
 
@@ -104,6 +105,26 @@ type (
 		Name string `json:"name"`
 	}
 
+	AlbumList2 struct {
+		Album []Album `json:"album"`
+	}
+
+	Album struct {
+		Id        string `json:"id"`
+		Album     string `json:"album"`
+		Title     string `json:"title"`
+		Name      string `json:"name"`
+		CoverArt  string `json:"coverArt"`
+		SongCount int    `json:"songCount"`
+		Created   string `json:"created"`
+		Duration  int    `json:"duration"`
+		PlayCount int    `json:"playCount"`
+		ArtistId  string `json:"artistId"`
+		Artist    string `json:"artist"`
+		Year      int    `json:"year"`
+		Genre     string `json:"genre"`
+	}
+
 	Generic401Response struct{}
 )
 
@@ -131,6 +152,7 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			MusicFolders:           nil,
 			User:                   nil,
 			OpenSubSonicExtensions: nil,
+			JukeboxPlaylist:        nil,
 
 			Error: nil,
 		},
