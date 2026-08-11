@@ -28,6 +28,7 @@ type (
 		Genres                 *[]Genre                 `json:"genres,omitempty"`
 		Playlists              *[]Playlist              `json:"playlists,omitempty"`
 		Album                  *Album                   `json:"album,omitempty"`
+		SearchResult3          *SearchResult3           `json:"searchResult3,omitempty"`
 		Error                  *Error                   `json:"error,omitempty"`
 	}
 
@@ -129,22 +130,19 @@ type (
 	}
 
 	Album struct {
-		Id        string `json:"id"`
-		Parent    string `json:"parent"`
-		Album     string `json:"album"`
-		Title     string `json:"title"`
-		Name      string `json:"name"`
-		IsDir     bool   `json:"isDir"`
-		CoverArt  string `json:"coverArt"`
-		SongCount int    `json:"songCount"`
-		Created   string `json:"created"`
-		Duration  int    `json:"duration"`
-		PlayCount int    `json:"playCount"`
-		ArtistId  string `json:"artistId"`
-		Artist    string `json:"artist"`
-		Year      int    `json:"year"`
-		Genre     string `json:"genre"`
-		Song      []Song `json:"song"`
+		Id         string `json:"id"`
+		Name       string `json:"name"`
+		Artist     string `json:"artist"`
+		Year       int    `json:"year"`
+		CoverArt   string `json:"coverArt"`
+		Starred    string `json:"starred"`
+		Duration   int    `json:"duration"`
+		PlayCount  int    `json:"playCount"`
+		Played     string `json:"played"`
+		Created    string `json:"created"`
+		ArtistId   string `json:"artistId"`
+		UserRating int    `json:"userRating"`
+		SongCount  int    `json:"songCount"`
 	}
 
 	Genre struct {
@@ -162,6 +160,21 @@ type (
 		Changed   string `json:"changed"`
 		SongCount int    `json:"songCount"`
 		Duration  int    `json:"duration"`
+	}
+
+	SearchResult3 struct {
+		Artist []Artist `json:"artist,omitempty"`
+		Album  []Album  `json:"album,omitempty"`
+		Song   []Song   `json:"song,omitempty"`
+	}
+
+	Artist struct {
+		Id             string `json:"id"`
+		Name           string `json:"name"`
+		CoverArt       string `json:"coverArt,omitempty"`
+		AlbumCount     int    `json:"albumCount,omitempty"`
+		UserRating     int    `json:"userRating,omitempty"`
+		ArtistImageUrl string `json:"artistImageUrl,omitempty"`
 	}
 
 	Generic401Response struct{}
@@ -196,6 +209,7 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			Genres:                 nil,
 			Playlists:              nil,
 			Album:                  nil,
+			SearchResult3:          nil,
 
 			Error: nil,
 		},

@@ -37,7 +37,6 @@ func main() {
 		r.Get("/getMusicFolders.view", server.HandleGetMusicFolders)
 		r.Get("/getGenres.view", server.HandleGetGenres)
 		r.Get("/getCoverArt.view", server.HandleGetCoverArt)
-		r.Get("/getAlbum.view", server.HandleGetAlbum)
 
 		// Playlists
 		r.Get("/getPlaylists.view", server.HandleGetPlaylists)
@@ -45,6 +44,9 @@ func main() {
 		// Jukebox
 		r.HandleFunc("/jukeboxControl.view", server.HandleJukeboxStatus)
 		r.Get("/jukeboxControl.view", server.HandleJukeboxPlaylist)
+
+		// Clarification
+		r.Get("/search3.view", server.HandleSearch3)
 
 		// Lists
 		r.Get("/getAlbumList2.view", server.HandleGetAlbumList2)
