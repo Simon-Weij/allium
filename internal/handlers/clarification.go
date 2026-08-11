@@ -1,5 +1,7 @@
 package handlers
 
+// TODO: more tests
+
 import (
 	"log/slog"
 	"net/http"
@@ -157,6 +159,7 @@ func parseQueries(w http.ResponseWriter, r *http.Request, metadata *metadata.Met
 	if err != nil {
 		slog.Error("something went wrong while searching with itunes", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return nil
 	}
 
 	return &queries

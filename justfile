@@ -11,6 +11,11 @@ vet:
     go vet ./...
 tidy:
     go mod tidy
+coverage browser="chromium":
+    mkdir -p /tmp/coverage
+    go test ./... -coverprofile=/tmp/coverage/coverage.out
+    go tool cover -html=/tmp/coverage/coverage.out -o=/tmp/coverage/coverage.html
+    {{browser}} /tmp/coverage/coverage.html
 pre-commit:
     just test
     just lint

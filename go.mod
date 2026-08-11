@@ -6,6 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/go-chi/chi/v5 v5.3.1
 	github.com/stretchr/testify v1.11.1
+	resty.dev/v3 v3.0.0-rc.3
 )
 
 require (
@@ -13,5 +14,4 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/net v0.43.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	resty.dev/v3 v3.0.0-rc.3 // indirect
 )
