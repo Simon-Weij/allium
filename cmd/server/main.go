@@ -4,6 +4,7 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -14,15 +15,20 @@ import (
 )
 
 const (
-	readTimeout  = 5 * time.Second
-	writeTimeout = 10 * time.Second
-	idleTimeout  = 120 * time.Second
+	readTimeout                    = 5 * time.Second
+	writeTimeout                   = 10 * time.Second
+	idleTimeout                    = 120 * time.Second
+	dataDirPermissions os.FileMode = 0o750
 )
 
 func main() {
 	cfg, err := config.ParseConfig()
 	if err != nil {
 		panic(err)
+	}
+
+	if err := os.MkdirAll(cfg.Data, dataDirPermissions); err != nil {
+		panic("could not create data directory " + cfg.Data + ": " + err.Error())
 	}
 
 	server := handlers.NewServer(*cfg)
@@ -37,8 +43,12 @@ func main() {
 		router.Get("/getLicense.view", server.HandleGetLicense)
 		router.Get("/getOpenSubsonicExtensions.view", server.HandleGetOpenSubsonicExtensions)
 
+		// User management
+		router.Get("/getUser.view", server.HandleGetUser)
+
 		// Clarification
 		router.Get("/search3.view", server.HandleSearch3)
+		router.Get("/getCoverArt.view", server.HandleGetCoverArt)
 	})
 
 	slog.Info("starting app...")

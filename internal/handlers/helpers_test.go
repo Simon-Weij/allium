@@ -18,6 +18,7 @@ func setupTestingConfig(t *testing.T) config.Config {
 	cfg := config.Config{
 		Username: "alice",
 		Password: "secret",
+		Data:     "",
 	}
 
 	return cfg

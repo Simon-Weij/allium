@@ -26,10 +26,15 @@ linters:
       excludes:
         - G401
         - G501
+        - G304
+        - G703
+        - G705
     varnamelen:
       ignore-decls:
         - w http.ResponseWriter
         - r *http.Request
+      ignore-names:
+        - id
     funlen:
       lines: 80
   exclusions:

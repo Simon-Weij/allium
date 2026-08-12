@@ -15,7 +15,7 @@ func (s Server) HandleGetLicense(w http.ResponseWriter, r *http.Request) {
 	res := NewEmptyResponse(s.cfg)
 	res.SubsonicResponse.License = &License{
 		Valid:          true,
-		Email:          "irrelevant@example.com",
+		Email:          testEmail,
 		LicenseExpires: &licenseExpiry,
 		TrialExpires:   &licenseExpiry,
 	}

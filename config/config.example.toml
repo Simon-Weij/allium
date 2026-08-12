@@ -1,2 +1,4 @@
 username = "alice"
 password = "changeme"
+
+data = "/data"

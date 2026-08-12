@@ -30,7 +30,7 @@ func TestLicense(t *testing.T) {
 	licenseExpiry := time.Date(2222, 1, 1, 1, 1, 1, 1, time.UTC)
 	res.SubsonicResponse.License = &License{
 		Valid:          true,
-		Email:          "irrelevant@example.com",
+		Email:          testEmail,
 		LicenseExpires: &licenseExpiry,
 		TrialExpires:   &licenseExpiry,
 	}

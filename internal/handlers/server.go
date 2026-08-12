@@ -13,6 +13,6 @@ type Server struct {
 func NewServer(cfg config.Config) *Server {
 	return &Server{
 		cfg:      cfg,
-		metadata: metadata.NewMetadata(),
+		metadata: metadata.NewMetadata(cfg),
 	}
 }

@@ -19,9 +19,9 @@ const (
 	testTrackID        = 111222333
 	testCollectionID   = 444555666
 	testArtistID       = 777888999
-	testArtworkURL     = "https://example.com/default-100.jpg"
-	testAlbumArtURL    = "https://example.com/album-100.jpg"
-	testArtistArtURL   = "https://example.com/artist-100.jpg"
+	testArtworkURL     = "https://example.com"
+	testAlbumArtURL    = "https://example.com"
+	testArtistArtURL   = "https://example.com"
 )
 
 func TestParseYear(t *testing.T) {
@@ -97,7 +97,7 @@ func baseExpectedSong(t *testing.T) Song {
 		Album:        "Test Album",
 		ArtistId:     "777888999",
 		Artist:       "Test Artist",
-		CoverArt:     "https://example.com/default-100.jpg",
+		CoverArt:     "https://example.com",
 		Duration:     200,
 		BitRate:      songBitRate,
 		BitDepth:     songBitDepth,
@@ -137,7 +137,7 @@ func baseExpectedAlbum(t *testing.T) Album {
 		Name:       "Test Album",
 		Artist:     "Test Artist",
 		Year:       2021,
-		CoverArt:   "https://example.com/album-100.jpg",
+		CoverArt:   "https://example.com",
 		Starred:    testReleaseDate,
 		Duration:   albumDurationPlaceholder,
 		PlayCount:  albumPlayCountPlaceholder,
@@ -293,7 +293,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		assert.Len(t, got.artists, 1)
 		assert.Equal(t, "123", got.artists[0].Id)
 		assert.Equal(t, "Artist", got.artists[0].Name)
-		assert.Equal(t, "https://example.com/artist-100.jpg", got.artists[0].CoverArt)
+		assert.Equal(t, "https://example.com", got.artists[0].CoverArt)
 	})
 
 	t.Run("empty input returns empty ResultTypes", func(t *testing.T) {

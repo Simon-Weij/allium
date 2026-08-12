@@ -8,7 +8,10 @@ services:
       CONFIG_PATH: /config/config.toml
     volumes:
       - ./config/config.toml:/config/config.toml:ro
+      - data:/app/cache
     develop:
       watch:
         - action: rebuild
           path: .
+volumes:
+  data:

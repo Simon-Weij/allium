@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"time"
 
@@ -219,4 +220,29 @@ func parseYear(dateString string) int {
 	}
 
 	return year
+}
+
+func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+
+	id := query.Get("id")
+	// TODO: support size
+
+	coverPath, err := s.metadata.GetAlbumCover(id)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+
+		return
+	}
+
+	imageBytes, err := os.ReadFile(coverPath)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "image/png")
+
+	_, _ = w.Write(imageBytes)
 }

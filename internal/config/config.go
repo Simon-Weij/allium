@@ -12,6 +12,7 @@ import (
 type Config struct {
 	Username string `toml:"username"`
 	Password string `toml:"password"`
+	Data     string `toml:"data"`
 }
 
 const (
@@ -39,6 +40,15 @@ func ParseConfig() (*Config, error) {
 
 	if _, err := toml.DecodeFile(configPath, &cfg); err != nil {
 		return nil, fmt.Errorf("could not decode file: %w", err)
+	}
+
+	if cfg.Data == "" {
+		cacheDir, err := os.UserCacheDir()
+		if err != nil {
+			return nil, fmt.Errorf("could not get user cache dir: %w", err)
+		}
+
+		cfg.Data = filepath.Join(cacheDir, Name)
 	}
 
 	requireNotEmpty(cfg.Username)
