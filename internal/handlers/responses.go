@@ -20,14 +20,7 @@ type (
 		ServerVersion          string                   `json:"serverVersion"`
 		OpenSubsonic           bool                     `json:"openSubsonic"`
 		License                *License                 `json:"license,omitempty"`
-		MusicFolders           *MusicFolders            `json:"musicFolders,omitempty"`
-		User                   *User                    `json:"user,omitempty"`
 		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
-		JukeboxPlaylist        *JukeboxPlaylist         `json:"jukeboxPlaylist,omitempty"`
-		AlbumList2             *AlbumList2              `json:"albumList2,omitempty"`
-		Genres                 *[]Genre                 `json:"genres,omitempty"`
-		Playlists              *[]Playlist              `json:"playlists,omitempty"`
-		Album                  *Album                   `json:"album,omitempty"`
 		SearchResult3          *SearchResult3           `json:"searchResult3,omitempty"`
 		Error                  *Error                   `json:"error,omitempty"`
 	}
@@ -47,30 +40,6 @@ type (
 	OpenSubSonicExtension struct {
 		Name    string
 		Version []int
-	}
-
-	User struct {
-		Folder            []int  `json:"folder"`
-		Email             string `json:"email"`
-		ScrobblingEnabled bool   `json:"scrobblingEnabled"`
-		AdminRole         bool   `json:"adminRole"`
-		SettingsRole      bool   `json:"settingsRole"`
-		DownloadRole      bool   `json:"downloadRole"`
-		PlaylistRole      bool   `json:"playlistRole"`
-		CoverArtRole      bool   `json:"coverArtRole"`
-		CommentRole       bool   `json:"commentRole"`
-		PodcastRole       bool   `json:"podcastRole"`
-		StreamRole        bool   `json:"streamRole"`
-		JukeboxRole       bool   `json:"jukeboxRole"`
-		ShareRole         bool   `json:"shareRole"`
-	}
-
-	JukeboxPlaylist struct {
-		CurrentIndex int     `json:"currentIndex"`
-		Playing      bool    `json:"playing"`
-		Gain         float32 `json:"gain"`
-		Position     int     `json:"position"`
-		Entry        *Song   `json:"entry,omitempty"`
 	}
 
 	Song struct {
@@ -100,35 +69,6 @@ type (
 		Path         string `json:"path"`
 	}
 
-	MusicFolders struct {
-		MusicFolder []MusicFolder `json:"musicFolder"`
-	}
-
-	MusicFolder struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
-
-	AlbumList2 struct {
-		Album []AlbumList2Album `json:"album"`
-	}
-
-	AlbumList2Album struct {
-		Id        string `json:"id"`
-		Album     string `json:"album"`
-		Title     string `json:"title"`
-		Name      string `json:"name"`
-		CoverArt  string `json:"coverArt"`
-		SongCount int    `json:"songCount"`
-		Created   string `json:"created"`
-		Duration  int    `json:"duration"`
-		PlayCount int    `json:"playCount"`
-		ArtistId  string `json:"artistId"`
-		Artist    string `json:"artist"`
-		Year      int    `json:"year"`
-		Genre     string `json:"genre"`
-	}
-
 	Album struct {
 		Id         string `json:"id"`
 		Name       string `json:"name"`
@@ -145,23 +85,6 @@ type (
 		SongCount  int    `json:"songCount"`
 	}
 
-	Genre struct {
-		SongCount  int    `json:"songCount"`
-		AlbumCount int    `json:"albumCount"`
-		Value      string `json:"value"`
-	}
-
-	Playlist struct {
-		Id        string `json:"id"`
-		Name      string `json:"name"`
-		Owner     string `json:"admin"`
-		Public    bool   `json:"public"`
-		Created   string `json:"created"`
-		Changed   string `json:"changed"`
-		SongCount int    `json:"songCount"`
-		Duration  int    `json:"duration"`
-	}
-
 	SearchResult3 struct {
 		Artist []Artist `json:"artist,omitempty"`
 		Album  []Album  `json:"album,omitempty"`
@@ -176,8 +99,6 @@ type (
 		UserRating     int    `json:"userRating,omitempty"`
 		ArtistImageUrl string `json:"artistImageUrl,omitempty"`
 	}
-
-	Generic401Response struct{}
 )
 
 func WriteError(w http.ResponseWriter, httpStatus int, cfg config.Config, code int, message string) {
@@ -201,14 +122,7 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			OpenSubsonic:  true,
 
 			License:                nil,
-			MusicFolders:           nil,
-			User:                   nil,
 			OpenSubSonicExtensions: nil,
-			JukeboxPlaylist:        nil,
-			AlbumList2:             nil,
-			Genres:                 nil,
-			Playlists:              nil,
-			Album:                  nil,
 			SearchResult3:          nil,
 
 			Error: nil,

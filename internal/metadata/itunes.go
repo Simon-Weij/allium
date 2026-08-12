@@ -17,42 +17,21 @@ type (
 	}
 
 	ITunesResult struct {
-		WrapperType             string  `json:"wrapperType"`
-		Kind                    string  `json:"kind"`
-		ArtistID                int     `json:"artistId"`
-		CollectionID            int     `json:"collectionId"`
-		TrackID                 int     `json:"trackId"`
-		ArtistLinkURL           string  `json:"artistLinkUrl"`
-		ArtistType              string  `json:"artistType"`
-		ArtistName              string  `json:"artistName"`
-		CollectionName          string  `json:"collectionName"`
-		TrackName               string  `json:"trackName"`
-		CollectionCensoredName  string  `json:"collectionCensoredName"`
-		TrackCensoredName       string  `json:"trackCensoredName"`
-		CollectionArtistID      int     `json:"collectionArtistId"`
-		CollectionArtistName    string  `json:"collectionArtistName"`
-		CollectionArtistViewURL string  `json:"collectionArtistViewUrl"`
-		ArtistViewURL           string  `json:"artistViewUrl"`
-		CollectionViewURL       string  `json:"collectionViewUrl"`
-		TrackViewURL            string  `json:"trackViewUrl"`
-		PreviewURL              string  `json:"previewUrl"`
-		ArtworkURL30            string  `json:"artworkUrl30"`
-		ArtworkURL60            string  `json:"artworkUrl60"`
-		ArtworkURL100           string  `json:"artworkUrl100"`
-		CollectionPrice         float64 `json:"collectionPrice"`
-		TrackPrice              float64 `json:"trackPrice"`
-		ReleaseDate             string  `json:"releaseDate"`
-		CollectionExplicitness  string  `json:"collectionExplicitness"`
-		TrackExplicitness       string  `json:"trackExplicitness"`
-		DiscCount               int     `json:"discCount"`
-		DiscNumber              int     `json:"discNumber"`
-		TrackCount              int     `json:"trackCount"`
-		TrackNumber             int     `json:"trackNumber"`
-		TrackTimeMillis         int     `json:"trackTimeMillis"`
-		Country                 string  `json:"country"`
-		Currency                string  `json:"currency"`
-		PrimaryGenreName        string  `json:"primaryGenreName"`
-		IsStreamable            bool    `json:"isStreamable"`
+		WrapperType      string `json:"wrapperType"`
+		Kind             string `json:"kind"`
+		ArtistID         int    `json:"artistId"`
+		CollectionID     int    `json:"collectionId"`
+		TrackID          int    `json:"trackId"`
+		ArtistName       string `json:"artistName"`
+		CollectionName   string `json:"collectionName"`
+		TrackName        string `json:"trackName"`
+		ArtworkURL100    string `json:"artworkUrl100"`
+		ReleaseDate      string `json:"releaseDate"`
+		DiscNumber       int    `json:"discNumber"`
+		TrackCount       int    `json:"trackCount"`
+		TrackNumber      int    `json:"trackNumber"`
+		TrackTimeMillis  int    `json:"trackTimeMillis"`
+		PrimaryGenreName string `json:"primaryGenreName"`
 	}
 )
 

@@ -1,7 +1,16 @@
 version: "2"
 linters:
-  enable:
-    - exhaustruct
+  default: all
+  disable:
+    - wsl
+    - gomodguard
+    - depguard
+    - testpackage
+    - revive
+    - godox
+    - noinlineerr
+    - errchkjson
+    - tagliatelle
   settings:
     exhaustruct:
       include:
@@ -9,3 +18,24 @@ linters:
     errcheck:
       exclude-functions:
         - (io.Closer).Close
+    copyloopvar:
+      check-alias: true
+    decorder:
+      disable-dec-order-check: false
+    gosec:
+      excludes:
+        - G401
+        - G501
+    varnamelen:
+      ignore-decls:
+        - w http.ResponseWriter
+        - r *http.Request
+    funlen:
+      lines: 80
+  exclusions:
+    rules:
+      - path: '(.+)_test\.go'
+        linters:
+          - funlen
+          - varnamelen
+          - noctx

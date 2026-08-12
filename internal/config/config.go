@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,8 +10,8 @@ import (
 )
 
 type Config struct {
-	Username string
-	Password string
+	Username string `toml:"username"`
+	Password string `toml:"password"`
 }
 
 const (
@@ -18,21 +19,24 @@ const (
 	Name    = "Allium"
 )
 
+var ErrConfigDirNotFound = errors.New("config dir not found")
+
 func ParseConfig() (*Config, error) {
 	var cfg Config
+
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
 		configDir, err := os.UserConfigDir()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: %w", ErrConfigDirNotFound, err)
 		}
 
 		_, err = os.Stat(filepath.Join(configDir, "allium", "config.toml"))
 		if err != nil {
 			panic("could not find config file in ~/.config/allium or the location of $CONFIG_PATH")
 		}
-
 	}
+
 	if _, err := toml.DecodeFile(configPath, &cfg); err != nil {
 		return nil, fmt.Errorf("could not decode file: %w", err)
 	}

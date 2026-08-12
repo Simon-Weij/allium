@@ -9,6 +9,7 @@ import (
 
 	"github.com/Simon-Weij/allium/internal/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func setupTestingConfig(t *testing.T) config.Config {
@@ -40,10 +41,10 @@ func assertJSONResponse(
 	defer res.Body.Close()
 
 	data, err := io.ReadAll(res.Body)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	expectedJSON, err := json.Marshal(expected)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.JSONEq(t, string(expectedJSON), string(data))
 }

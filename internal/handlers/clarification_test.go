@@ -7,7 +7,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	testReleaseDate    = "2021-08-13T12:00:00Z"
+	testValidDate      = "2023-05-04T07:00:00Z"
+	testCorruptedDate  = "20-20-20T03:30:30z"
+	testIrrelevantDate = "wi9ofhujwuiofhwuifhwuifhjw"
+	testGenre          = "Rock"
+	testArtistName     = "Test Artist"
+	testAlbumName      = "Test Album"
+	testTrackName      = "Test Song"
+	testTrackID        = 111222333
+	testCollectionID   = 444555666
+	testArtistID       = 777888999
+	testArtworkURL     = "https://example.com/default-100.jpg"
+	testAlbumArtURL    = "https://example.com/album-100.jpg"
+	testArtistArtURL   = "https://example.com/artist-100.jpg"
+)
+
 func TestParseYear(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		date     string
@@ -15,7 +34,7 @@ func TestParseYear(t *testing.T) {
 	}{
 		{
 			name:     "should run correctly with itunes-like date",
-			date:     "2023-05-04T07:00:00Z",
+			date:     testValidDate,
 			expected: 2023,
 		},
 		{
@@ -25,17 +44,19 @@ func TestParseYear(t *testing.T) {
 		},
 		{
 			name:     "should return 0 on corrupted date",
-			date:     "20-20-20T03:30:30z",
+			date:     testCorruptedDate,
 			expected: 0,
 		},
 		{
 			name:     "should return 0 on empty with irrelevant data",
-			date:     "wi9ofhujwuiofhwuifhwuifhjw",
+			date:     testIrrelevantDate,
 			expected: 0,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := parseYear(tt.date)
 			assert.Equal(t, tt.expected, got)
 		})
@@ -46,19 +67,19 @@ func baseITunesTrack(t *testing.T) metadata.ITunesResult {
 	t.Helper()
 	//nolint:exhaustruct
 	return metadata.ITunesResult{
-		WrapperType:      "track",
+		WrapperType:      itunesWrapperTrack,
 		Kind:             "song",
-		TrackID:          111222333,
-		CollectionID:     444555666,
-		ArtistID:         777888999,
-		ArtistName:       "Test Artist",
-		CollectionName:   "Test Album",
-		TrackName:        "Test Song",
-		ArtworkURL100:    "https://example.com/default-100.jpg",
-		ReleaseDate:      "2021-08-13T12:00:00Z",
+		TrackID:          testTrackID,
+		CollectionID:     testCollectionID,
+		ArtistID:         testArtistID,
+		ArtistName:       testArtistName,
+		CollectionName:   testAlbumName,
+		TrackName:        testTrackName,
+		ArtworkURL100:    testArtworkURL,
+		ReleaseDate:      testReleaseDate,
 		TrackNumber:      1,
 		TrackTimeMillis:  200000,
-		PrimaryGenreName: "Pop",
+		PrimaryGenreName: testGenre,
 	}
 }
 
@@ -71,23 +92,23 @@ func baseExpectedSong(t *testing.T) Song {
 		Title:        "Test Song",
 		IsDir:        false,
 		IsVideo:      false,
-		Type:         "music",
+		Type:         songType,
 		AlbumId:      "444555666",
 		Album:        "Test Album",
 		ArtistId:     "777888999",
 		Artist:       "Test Artist",
 		CoverArt:     "https://example.com/default-100.jpg",
 		Duration:     200,
-		BitRate:      320,
-		BitDepth:     24,
-		SamplingRate: 48000,
-		ChannelCount: 2,
+		BitRate:      songBitRate,
+		BitDepth:     songBitDepth,
+		SamplingRate: songSamplingRate,
+		ChannelCount: songChannelCount,
 		Track:        1,
 		Year:         2021,
-		Genre:        "Pop",
-		Suffix:       "mp3",
-		ContentType:  "audio/mpeg",
-		Path:         "/home/alice/Music",
+		Genre:        testGenre,
+		Suffix:       songSuffix,
+		ContentType:  songContentType,
+		Path:         songPath,
 	}
 }
 
@@ -95,41 +116,44 @@ func baseITunesAlbum(t *testing.T) metadata.ITunesResult {
 	t.Helper()
 	//nolint:exhaustruct
 	return metadata.ITunesResult{
-		WrapperType:      "collection",
+		WrapperType:      itunesWrapperCollection,
 		Kind:             "album",
-		CollectionID:     444555666,
-		ArtistID:         777888999,
-		ArtistName:       "Test Artist",
-		CollectionName:   "Test Album",
-		ArtworkURL100:    "https://example.com/album-100.jpg",
-		ReleaseDate:      "2021-08-13T12:00:00Z",
+		CollectionID:     testCollectionID,
+		ArtistID:         testArtistID,
+		ArtistName:       testArtistName,
+		CollectionName:   testAlbumName,
+		ArtworkURL100:    testAlbumArtURL,
+		ReleaseDate:      testReleaseDate,
 		TrackCount:       10,
-		PrimaryGenreName: "Pop",
+		PrimaryGenreName: testGenre,
 	}
 }
 
 func baseExpectedAlbum(t *testing.T) Album {
 	t.Helper()
-	//nolint:exhaustruct
+
 	return Album{
 		Id:         "444555666",
 		Name:       "Test Album",
 		Artist:     "Test Artist",
 		Year:       2021,
 		CoverArt:   "https://example.com/album-100.jpg",
-		Starred:    "2021-08-13T12:00:00Z",
-		Duration:   30000,
-		PlayCount:  8,
-		Played:     "2023-03-28T00:45:13Z",
-		Created:    "2021-08-13T12:00:00Z",
+		Starred:    testReleaseDate,
+		Duration:   albumDurationPlaceholder,
+		PlayCount:  albumPlayCountPlaceholder,
+		Played:     playedPlaceholderDate,
+		Created:    testReleaseDate,
 		ArtistId:   "777888999",
-		UserRating: 5,
+		UserRating: userRatingPlaceholder,
 		SongCount:  10,
 	}
 }
 
 func TestConvertItunesOpenSubsonic(t *testing.T) {
+	t.Parallel()
+
 	t.Run("successful conversion of a track", func(t *testing.T) {
+		t.Parallel()
 		input := []metadata.ITunesResult{
 			baseITunesTrack(t),
 		}
@@ -141,6 +165,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("missing release date defaults year to 0", func(t *testing.T) {
+		t.Parallel()
 		track := baseITunesTrack(t)
 		track.ReleaseDate = ""
 
@@ -154,6 +179,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("zero track time defaults duration to 0", func(t *testing.T) {
+		t.Parallel()
 		track := baseITunesTrack(t)
 		track.TrackTimeMillis = 0
 
@@ -167,6 +193,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("missing artwork url defaults cover art to empty", func(t *testing.T) {
+		t.Parallel()
 		track := baseITunesTrack(t)
 		track.ArtworkURL100 = ""
 
@@ -180,6 +207,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("unknown wrapper type is ignored", func(t *testing.T) {
+		t.Parallel()
 		track := baseITunesTrack(t)
 		track.WrapperType = "unknown-type"
 
@@ -191,6 +219,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("successful conversion of an album", func(t *testing.T) {
+		t.Parallel()
 		input := []metadata.ITunesResult{
 			baseITunesAlbum(t),
 		}
@@ -202,6 +231,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("missing release date defaults album year to 0", func(t *testing.T) {
+		t.Parallel()
 		album := baseITunesAlbum(t)
 		album.ReleaseDate = ""
 
@@ -217,6 +247,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("missing artwork url defaults album cover art to empty", func(t *testing.T) {
+		t.Parallel()
 		album := baseITunesAlbum(t)
 		album.ArtworkURL100 = ""
 
@@ -230,6 +261,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("album with zero track count", func(t *testing.T) {
+		t.Parallel()
 		album := baseITunesAlbum(t)
 		album.TrackCount = 0
 
@@ -243,13 +275,14 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("artist is parsed correctly", func(t *testing.T) {
+		t.Parallel()
 		//nolint:exhaustruct
 		artistInput := metadata.ITunesResult{
-			WrapperType:      "artist",
+			WrapperType:      itunesWrapperArtist,
 			Kind:             "artist",
 			ArtistID:         123,
 			ArtistName:       "Artist",
-			ArtworkURL100:    "https://example.com/artist-100.jpg",
+			ArtworkURL100:    testArtistArtURL,
 			PrimaryGenreName: "Genre",
 		}
 
@@ -264,6 +297,8 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("empty input returns empty ResultTypes", func(t *testing.T) {
+		t.Parallel()
+
 		got := convertItunesOpenSubsonic([]metadata.ITunesResult{})
 
 		assert.Empty(t, got.songs)
@@ -272,6 +307,8 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	})
 
 	t.Run("nil input returns empty ResultTypes", func(t *testing.T) {
+		t.Parallel()
+
 		got := convertItunesOpenSubsonic(nil)
 
 		assert.Empty(t, got.songs)

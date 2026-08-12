@@ -23,7 +23,6 @@ func (s Server) HandleGetLicense(w http.ResponseWriter, r *http.Request) {
 	WriteJSON(w, http.StatusOK, res)
 }
 
-// TODO: stop returning placeholders
 func (s Server) HandleGetOpenSubsonicExtensions(w http.ResponseWriter, r *http.Request) {
 	res := NewEmptyResponse(s.cfg)
 	res.SubsonicResponse.OpenSubSonicExtensions = &[]OpenSubSonicExtension{}

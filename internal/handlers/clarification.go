@@ -3,6 +3,7 @@ package handlers
 // TODO: more tests
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -12,18 +13,43 @@ import (
 	"github.com/Simon-Weij/allium/internal/metadata"
 )
 
-type Queries struct {
-	ArtistCount int
-	SongCount   int
-	AlbumCount  int
-	res         *metadata.ITunesResponse
-}
+type (
+	Queries struct {
+		ArtistCount int
+		SongCount   int
+		AlbumCount  int
+		res         *metadata.ITunesResponse
+	}
+	ResultTypes struct {
+		songs   []Song
+		artists []Artist
+		albums  []Album
+	}
+)
 
-type ResultTypes struct {
-	songs   []Song
-	artists []Artist
-	albums  []Album
-}
+const (
+	defaultSearchLimit = 20
+	millisPerSecond    = 1000
+
+	itunesWrapperTrack      = "track"
+	itunesWrapperCollection = "collection"
+	itunesWrapperArtist     = "artist"
+
+	songType         = "music"
+	songSuffix       = "mp3"
+	songContentType  = "audio/mpeg"
+	songPath         = "/home/alice/Music"
+	songBitRate      = 320
+	songBitDepth     = 24
+	songSamplingRate = 48000
+	songChannelCount = 2
+
+	albumDurationPlaceholder    = 30000
+	albumPlayCountPlaceholder   = 8
+	artistAlbumCountPlaceholder = 5
+	userRatingPlaceholder       = 5
+	playedPlaceholderDate       = "2023-03-28T00:45:13Z"
+)
 
 func (s Server) HandleSearch3(w http.ResponseWriter, r *http.Request) {
 	queries := parseQueries(w, r, s.metadata)
@@ -60,65 +86,66 @@ func convertItunesOpenSubsonic(results []metadata.ITunesResult) ResultTypes {
 	artists := []Artist{}
 	albums := []Album{}
 
-	for _, v := range results {
-		switch v.WrapperType {
-		case "track":
+	for _, result := range results {
+		switch result.WrapperType {
+		case itunesWrapperTrack:
 			songs = append(songs, Song{
-				Id:           strconv.Itoa(v.TrackID),
-				Parent:       strconv.Itoa(v.CollectionID),
-				Title:        v.TrackName,
+				Id:           strconv.Itoa(result.TrackID),
+				Parent:       strconv.Itoa(result.CollectionID),
+				Title:        result.TrackName,
 				IsDir:        false,
 				IsVideo:      false,
-				Type:         "music",
-				AlbumId:      strconv.Itoa(v.CollectionID),
-				Album:        v.CollectionName,
-				ArtistId:     strconv.Itoa(v.ArtistID),
-				Artist:       v.ArtistName,
-				CoverArt:     v.ArtworkURL100,
-				Duration:     v.TrackTimeMillis / 1000,
-				BitRate:      320, // placeholder
-				BitDepth:     24,
+				Type:         songType,
+				AlbumId:      strconv.Itoa(result.CollectionID),
+				Album:        result.CollectionName,
+				ArtistId:     strconv.Itoa(result.ArtistID),
+				Artist:       result.ArtistName,
+				CoverArt:     result.ArtworkURL100,
+				Duration:     result.TrackTimeMillis / millisPerSecond,
+				BitRate:      songBitRate,
+				BitDepth:     songBitDepth,
 				Size:         0,
-				SamplingRate: 48000, // placeholder
-				ChannelCount: 2,
-				Track:        v.TrackNumber,
-				Year:         parseYear(v.ReleaseDate),
-				Genre:        v.PrimaryGenreName,
-				DiscNumber:   v.DiscNumber,
-				Suffix:       "mp3", // placeholder
-				ContentType:  "audio/mpeg",
-				Path:         "/home/alice/Music", // placeholder
+				SamplingRate: songSamplingRate,
+				ChannelCount: songChannelCount,
+				Track:        result.TrackNumber,
+				Year:         parseYear(result.ReleaseDate),
+				Genre:        result.PrimaryGenreName,
+				DiscNumber:   result.DiscNumber,
+				Suffix:       songSuffix,
+				ContentType:  songContentType,
+				Path:         songPath,
 			})
-		case "collection":
+		case itunesWrapperCollection:
 			albums = append(albums, Album{
-				Id:         strconv.Itoa(v.CollectionID),
-				Name:       v.CollectionName,
-				Artist:     v.ArtistName,
-				Year:       parseYear(v.ReleaseDate),
-				CoverArt:   v.ArtworkURL100,
-				Starred:    v.ReleaseDate,          // placeholder
-				Duration:   30000,                  // placeholder
-				PlayCount:  8,                      // placeholder
-				Played:     "2023-03-28T00:45:13Z", // placeholder
-				Created:    v.ReleaseDate,
-				ArtistId:   strconv.Itoa(v.ArtistID),
-				UserRating: 5, // placeholder
-				SongCount:  v.TrackCount,
+				Id:         strconv.Itoa(result.CollectionID),
+				Name:       result.CollectionName,
+				Artist:     result.ArtistName,
+				Year:       parseYear(result.ReleaseDate),
+				CoverArt:   result.ArtworkURL100,
+				Starred:    result.ReleaseDate,
+				Duration:   albumDurationPlaceholder,
+				PlayCount:  albumPlayCountPlaceholder,
+				Played:     playedPlaceholderDate,
+				Created:    result.ReleaseDate,
+				ArtistId:   strconv.Itoa(result.ArtistID),
+				UserRating: userRatingPlaceholder,
+				SongCount:  result.TrackCount,
 			})
-		case "artist":
+		case itunesWrapperArtist:
 			artists = append(artists, Artist{
-				Id:             strconv.Itoa(v.ArtistID),
-				Name:           v.ArtistName,
-				CoverArt:       v.ArtworkURL100,
-				AlbumCount:     5, // placeholder
-				UserRating:     5, // placeholder
-				ArtistImageUrl: v.ArtworkURL100,
+				Id:             strconv.Itoa(result.ArtistID),
+				Name:           result.ArtistName,
+				CoverArt:       result.ArtworkURL100,
+				AlbumCount:     artistAlbumCountPlaceholder,
+				UserRating:     userRatingPlaceholder,
+				ArtistImageUrl: result.ArtworkURL100,
 			})
 
 		default:
-			slog.Error("unknown type", "result", v)
+			slog.Error("unknown type", "result", result)
 		}
 	}
+
 	return ResultTypes{
 		songs:   songs,
 		albums:  albums,
@@ -135,23 +162,24 @@ func parseQueries(w http.ResponseWriter, r *http.Request, metadata *metadata.Met
 		err     error
 	)
 
-	defaultLimit := 20
-
-	queries.ArtistCount, err = queryInt(query, "artistCount", defaultLimit)
+	queries.ArtistCount, err = queryInt(query, "artistCount", defaultSearchLimit)
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
+
 		return nil
 	}
 
-	queries.AlbumCount, err = queryInt(query, "albumCount", defaultLimit)
+	queries.AlbumCount, err = queryInt(query, "albumCount", defaultSearchLimit)
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
+
 		return nil
 	}
 
-	queries.SongCount, err = queryInt(query, "songCount", defaultLimit)
+	queries.SongCount, err = queryInt(query, "songCount", defaultSearchLimit)
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
+
 		return nil
 	}
 
@@ -159,6 +187,7 @@ func parseQueries(w http.ResponseWriter, r *http.Request, metadata *metadata.Met
 	if err != nil {
 		slog.Error("something went wrong while searching with itunes", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
+
 		return nil
 	}
 
@@ -170,16 +199,24 @@ func queryInt(query url.Values, key string, def int) (int, error) {
 	if v == "" {
 		return def, nil
 	}
-	return strconv.Atoi(v)
+
+	n, err := strconv.Atoi(v)
+	if err != nil {
+		return 0, fmt.Errorf("parsing query param %q: %w", key, err)
+	}
+
+	return n, nil
 }
 
 func parseYear(dateString string) int {
 	var year int
+
 	t, err := time.Parse(time.RFC3339, dateString)
 	if err != nil {
 		year = 0
 	} else {
 		year = t.Year()
 	}
+
 	return year
 }

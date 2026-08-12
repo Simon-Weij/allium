@@ -1,5 +1,3 @@
-// TOOD: replace this with proper auth
-
 package middleware
 
 import (
@@ -10,6 +8,13 @@ import (
 
 	"github.com/Simon-Weij/allium/internal/config"
 	"github.com/Simon-Weij/allium/internal/handlers"
+)
+
+const (
+	ErrWrongCredentials                    = 10
+	ErrNotSupported                        = 42
+	ErrConflictingAuthenticationMechanisms = 43
+	ErrParameterMissing                    = 10
 )
 
 func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
@@ -28,32 +33,69 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 			hasBothUnsupported := password != "" && apiKey != ""
 
 			if (hasTokenAuth && hasUnsupportedAuth) || hasBothUnsupported {
-				handlers.WriteError(w, http.StatusBadRequest, cfg, 43, "Conflicting auth methods")
+				handlers.WriteError(
+					w,
+					http.StatusBadRequest,
+					cfg,
+					ErrConflictingAuthenticationMechanisms,
+					"Conflicting auth methods",
+				)
+
 				return
 			}
 
 			if hasUnsupportedAuth {
-				handlers.WriteError(w, http.StatusBadRequest, cfg, 42, "Auth method not supported")
+				handlers.WriteError(
+					w,
+					http.StatusBadRequest,
+					cfg,
+					ErrNotSupported,
+					"Auth method not supported",
+				)
+
 				return
 			}
 
 			if username == "" || !hasTokenAuth {
-				handlers.WriteError(w, http.StatusBadRequest, cfg, 10, "Required parameter is missing")
+				handlers.WriteError(
+					w,
+					http.StatusBadRequest,
+					cfg,
+					ErrParameterMissing,
+					"Required parameter is missing",
+				)
+
 				return
 			}
 
-			isValidUser := subtle.ConstantTimeCompare([]byte(cfg.Username), []byte(username)) == 1
-			if !isValidUser || !matchToken(cfg.Password, salt, token) {
-				handlers.WriteError(w, http.StatusUnauthorized, cfg, 40, "Wrong username or password")
-				return
-			}
+			isValidUser(w, cfg, username, salt, token)
 
 			next.ServeHTTP(w, r)
 		})
 	}
 }
 
+func isValidUser(
+	w http.ResponseWriter,
+	cfg config.Config,
+	username,
+	salt,
+	token string,
+) {
+	isValidUser := subtle.ConstantTimeCompare([]byte(cfg.Username), []byte(username)) == 1
+	if !isValidUser || !matchToken(cfg.Password, salt, token) {
+		handlers.WriteError(
+			w,
+			http.StatusUnauthorized,
+			cfg,
+			ErrWrongCredentials,
+			"Wrong username or password",
+		)
+	}
+}
+
 func matchToken(storedPassword, salt, token string) bool {
 	sum := md5.Sum([]byte(storedPassword + salt))
+
 	return subtle.ConstantTimeCompare([]byte(hex.EncodeToString(sum[:])), []byte(token)) == 1
 }
