@@ -15,6 +15,7 @@ type statusRecorder struct {
 }
 
 const (
+	magenta = "\u001b[35m"
 	red    = "\033[31m"
 	green  = "\033[32m"
 	yellow = "\033[33m"
@@ -67,11 +68,14 @@ func WithLogging(next http.Handler) http.Handler {
 		next.ServeHTTP(statusRecorder, r)
 
 		log.Printf(
-			"%s%s%s %s %s%d%s %v",
+			"%s%s%s %s%s%s %s %s%d%s %v",
 			cyan,
 			strconv.Quote(r.Method),
 			reset,
 			strconv.Quote(r.URL.Path),
+			magenta,
+			strconv.Quote(r.URL.String()),
+			reset,
 			statusColor(statusRecorder.status),
 			statusRecorder.status,
 			reset,

@@ -226,7 +226,7 @@ func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
 	id := query.Get("id")
-	// TODO: support size
+	// Not supporting Size for now, Its better to cache a larger image than multiple smaller ones, reduces strain on iTunes & allium
 
 	coverPath, err := s.metadata.GetAlbumCover(id)
 	if err != nil {
