@@ -35,3 +35,21 @@ func TestCreateDirs(t *testing.T) {
 		assert.ErrorIs(t, err, errCreatingDirs)
 	})
 }
+
+func TestGetCoverArtURL(t *testing.T) {
+	t.Parallel()
+
+	t.Run("should return the URL as expected", func(t *testing.T) {
+		t.Parallel()
+
+		got, err := coverArtURL("https://example.com/100x100bb.jpg")
+		require.NoError(t, err)
+		assert.Equal(t, "https://example.com/"+coverArtSize, got)
+	})
+	t.Run("should error when the url isn't valid (doesn't contain a /)", func(t *testing.T) {
+		t.Parallel()
+
+		_, err := coverArtURL("notanurl")
+		assert.ErrorIs(t, err, errInvalidArtworkURL)
+	})
+}
