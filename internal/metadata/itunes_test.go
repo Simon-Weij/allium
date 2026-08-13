@@ -7,8 +7,73 @@ import (
 
 	"github.com/Simon-Weij/allium/internal/testutil"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
+
+type testDownloader struct {
+	mock.Mock
+}
+
+func (m *testDownloader) downloadAlbumCover(artworkUrl, target string) error {
+	args := m.Called(artworkUrl, target)
+
+	return args.Error(0)
+}
+
+func TestGetAlbumCover(t *testing.T) {
+	t.Parallel()
+
+	t.Run("should correctly return the album covers", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := testutil.SetupTestingConfig(t)
+		cfg.Data = t.TempDir()
+		metadata := NewMetadata(cfg)
+
+		downloader := &testDownloader{
+			Mock: mock.Mock{},
+		}
+		metadata.downloader = downloader
+
+		const id = "abcdef"
+
+		coverPath := filepath.Join(cfg.Data, "covers", "ab", "cd", "ef", "cover.jpg")
+
+		downloader.On("downloadAlbumCover", id, coverPath).Return(nil)
+
+		path, err := metadata.GetAlbumCover(id)
+		require.NoError(t, err)
+		assert.Equal(t, coverPath, path)
+
+		downloader.AssertExpectations(t)
+	})
+	t.Run("should not download when the cover already exists", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := testutil.SetupTestingConfig(t)
+		cfg.Data = t.TempDir()
+		metadata := NewMetadata(cfg)
+
+		downloader := &testDownloader{
+			Mock: mock.Mock{},
+		}
+		metadata.downloader = downloader
+
+		const id = "abcdef"
+
+		coverPath := filepath.Join(cfg.Data, "covers", "ab", "cd", "ef", "cover.jpg")
+
+		require.NoError(t, os.MkdirAll(filepath.Dir(coverPath), 0o755))
+		require.NoError(t, os.WriteFile(coverPath, []byte("art"), 0o644))
+
+		path, err := metadata.GetAlbumCover(id)
+		require.NoError(t, err)
+		assert.Equal(t, coverPath, path)
+
+		downloader.AssertNotCalled(t, "downloadAlbumCover", mock.Anything, mock.Anything)
+	})
+}
 
 func TestCreateDirs(t *testing.T) {
 	t.Parallel()

@@ -45,3 +45,4 @@ linters:
           - varnamelen
           - noctx
           - gosec
+          - wrapcheck

@@ -13,8 +13,9 @@ import (
 
 type (
 	Metadata struct {
-		client *resty.Client
-		cfg    config.Config
+		client     *resty.Client
+		cfg        config.Config
+		downloader downloader
 	}
 
 	ITunesResponse struct {
@@ -39,6 +40,10 @@ type (
 		TrackTimeMillis  int    `json:"trackTimeMillis"`
 		PrimaryGenreName string `json:"primaryGenreName"`
 	}
+
+	downloader interface {
+		downloadAlbumCover(artworkURL, target string) error
+	}
 )
 
 const (
@@ -58,10 +63,15 @@ var (
 )
 
 func NewMetadata(cfg config.Config) *Metadata {
-	return &Metadata{
+	metadata := &Metadata{
 		client: resty.New(),
 		cfg:    cfg,
+
+		downloader: nil,
 	}
+	metadata.downloader = metadata
+
+	return metadata
 }
 
 func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
@@ -104,7 +114,7 @@ func (m Metadata) GetAlbumCover(id string) (string, error) {
 	coverPath := filepath.Join(coverDir, "cover.jpg")
 
 	if _, err := os.Stat(coverPath); errors.Is(err, os.ErrNotExist) {
-		if err := m.downloadAlbumCover(id, coverPath); err != nil {
+		if err := m.downloader.downloadAlbumCover(id, coverPath); err != nil {
 			return "", err
 		}
 	}
