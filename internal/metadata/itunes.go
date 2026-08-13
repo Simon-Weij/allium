@@ -52,7 +52,10 @@ const (
 	groupRestricted  = 0o750
 )
 
-var errInvalidArtworkURL = errors.New("invalid artwork url")
+var (
+	errInvalidArtworkURL = errors.New("invalid artwork url")
+	errCreatingDirs      = errors.New("couldn't create directories")
+)
 
 func NewMetadata(cfg config.Config) *Metadata {
 	return &Metadata{
@@ -160,7 +163,7 @@ func (m Metadata) createDirs(baseDirs, str string) (string, error) {
 
 		relativeDir = filepath.Join(relativeDir, str[i:end])
 		if err := os.MkdirAll(filepath.Join(baseDirs, relativeDir), groupRestricted); err != nil {
-			return "", fmt.Errorf("something went wrong creating directories: %w", err)
+			return "", fmt.Errorf("%w: %w", errCreatingDirs, err)
 		}
 	}
 
