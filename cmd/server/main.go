@@ -49,6 +49,9 @@ func main() {
 		// Clarification
 		router.Get("/search3.view", server.HandleSearch3)
 		router.Get("/getCoverArt.view", server.HandleGetCoverArt)
+
+		// Browsing
+		router.Get("/getAlbum.view", server.HandleGetAlbum)
 	})
 
 	slog.Info("starting app...")
