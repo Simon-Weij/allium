@@ -140,7 +140,6 @@ type (
 
 const testEmail = "irrelevant@example.com"
 
-// WriteError is a helper function, it writes the Error that occurred as a response to the client
 func WriteError(w http.ResponseWriter, httpStatus int, cfg config.Config, code int, message string) {
 	res := NewEmptyResponse(cfg)
 	res.SubsonicResponse.Status = "failed"
@@ -152,8 +151,6 @@ func WriteError(w http.ResponseWriter, httpStatus int, cfg config.Config, code i
 	WriteJSON(w, httpStatus, res)
 }
 
-// NewEmptyResponse creates an empty OpenSubsonic compatible response,
-// the staus for an empty response is "ok" (200)
 func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 	return SubsonicResponseWrapper{
 		SubsonicResponse: Subsonic{

@@ -22,11 +22,9 @@ type Queries struct {
 	res         *metadata.ITunesResponse
 }
 
-const defaultSearchLimit = 20 // The default limit for number of items returned for each artist, album and song by the server
+const defaultSearchLimit = 20
 
 // HandleSearch3 handles the search3 endpoint client requests
-// It parses the client query parameters and trims the search results to the search default limit
-// then, it writes the search data in JSON format as a response to the client.
 func (s Server) HandleSearch3(w http.ResponseWriter, r *http.Request) {
 	queries := parseQueries(w, r, s.metadata)
 
@@ -123,7 +121,6 @@ func queryInt(query url.Values, key string, def int) (int, error) {
 
 // HandleGetCoverArt handles the getCoverArt request from the client
 // it extracts the id from the client's request and requests CoverArt from iTunes
-// which is then saved in the coverPath, the server then writes the image as a response to the client.
 func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 

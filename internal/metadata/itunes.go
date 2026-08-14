@@ -53,8 +53,7 @@ var (
 	errCreatingDirs      = errors.New("couldn't create directories")
 )
 
-// SearchWithItunes takes an argument of query, which is a search query returned by the client
-// It returns the iTunes response
+
 func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
 	entities := []string{"song", "album", "musicArtist"}
 
