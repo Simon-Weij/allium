@@ -4,6 +4,8 @@ import (
 	"net/http"
 )
 
+// HandleGetUser handles the getUser endpoint, It gets details about the specified user,
+// including authorisation roles and folder access
 func (s Server) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 	res := NewEmptyResponse(s.cfg)
 	res.SubsonicResponse.User = &User{

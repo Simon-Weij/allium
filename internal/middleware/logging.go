@@ -23,11 +23,13 @@ const (
 	reset  = "\033[0m"
 )
 
+// WriteHeader sends a HTTP header response and saves the status to r.status
 func (r *statusRecorder) WriteHeader(status int) {
 	r.status = status
 	r.ResponseWriter.WriteHeader(status)
 }
 
+// Write writes b as an HTTP reply
 func (r *statusRecorder) Write(b []byte) (int, error) {
 	if r.status == 0 {
 		r.status = http.StatusOK
@@ -41,6 +43,7 @@ func (r *statusRecorder) Write(b []byte) (int, error) {
 	return n, nil
 }
 
+// statusColor determines the statusColor based on the status code
 func statusColor(status int) string {
 	switch {
 	case status >= http.StatusInternalServerError:
@@ -56,6 +59,7 @@ func statusColor(status int) string {
 	}
 }
 
+// Logging Middleware, Logs Request Method, Method URL Path, URL and time taken to satisfy request
 func WithLogging(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()

@@ -56,6 +56,8 @@ func NewMetadata(cfg config.Config) *Metadata {
 	}
 }
 
+// SearchWithItunes takes an argument of query, which is a search query returned by the client
+// It returns the iTunes response
 func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
 	entities := []string{"song", "album", "musicArtist"}
 
@@ -104,6 +106,8 @@ func (m Metadata) GetAlbumCover(id string) (string, error) {
 	return coverPath, nil
 }
 
+// downloadAlbumCover downloads the album cover from the artworkURL,
+// the downloaded cover is saved to the target destination
 func (m Metadata) downloadAlbumCover(artworkURL, target string) error {
 	_, err := m.client.R().
 		SetResponseSaveToFile(true).

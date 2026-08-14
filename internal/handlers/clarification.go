@@ -4,6 +4,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -29,7 +30,7 @@ type (
 )
 
 const (
-	defaultSearchLimit = 20
+	defaultSearchLimit = 20 // The default limit for number of items returned for each artist, album and song by the server
 	millisPerSecond    = 1000
 
 	itunesWrapperTrack      = "track"
@@ -52,6 +53,9 @@ const (
 	playedPlaceholderDate       = "2023-03-28T00:45:13Z"
 )
 
+// HandleSearch3 handles the search3 endpoint client requests
+// It parses the client query parameters and trims the search results to the search default limit
+// then, it writes the search data in JSON format as a response to the client.
 func (s Server) HandleSearch3(w http.ResponseWriter, r *http.Request) {
 	queries := parseQueries(w, r, s.metadata)
 
@@ -70,6 +74,8 @@ func (s Server) HandleSearch3(w http.ResponseWriter, r *http.Request) {
 	WriteJSON(w, http.StatusOK, res)
 }
 
+// trimToLimit takes an argument of type []T (underlying type of []any), 
+// it trims the number of item (T) in items ([]T) to 20 (matching the server's defaultSearchLimit)
 func trimToLimit[T any](items []T, count int) []T {
 	if count <= 0 {
 		count = 20
@@ -82,6 +88,7 @@ func trimToLimit[T any](items []T, count int) []T {
 	return items
 }
 
+// convertItunesOpenSubsonic converts data returned by iTunes into OpenSubsonic compatible data
 func convertItunesOpenSubsonic(results []metadata.ITunesResult) ResultTypes {
 	songs := []Song{}
 	artists := []Artist{}
@@ -154,8 +161,13 @@ func convertItunesOpenSubsonic(results []metadata.ITunesResult) ResultTypes {
 	}
 }
 
+// parseQueries parses the queries from the client's request URL, 
+// It extracts all the keys and value pairs from the query and formats them in a Queries object
+// Populating empty keys with the default values. 
+// Read https://opensubsonic.netlify.app/docs/endpoints/search3/ for the default values
 func parseQueries(w http.ResponseWriter, r *http.Request, metadata *metadata.Metadata) *Queries {
 	query := r.URL.Query()
+	log.Println(query)
 	searchQuery := query.Get("query")
 
 	var (
@@ -195,6 +207,8 @@ func parseQueries(w http.ResponseWriter, r *http.Request, metadata *metadata.Met
 	return &queries
 }
 
+// queryInt converts a client's query value to an integer and returns it, 
+// if a value for the query key does not exist, then it returns the default search limit (20)
 func queryInt(query url.Values, key string, def int) (int, error) {
 	v := query.Get(key)
 	if v == "" {
@@ -209,6 +223,7 @@ func queryInt(query url.Values, key string, def int) (int, error) {
 	return n, nil
 }
 
+// parseYear takes a date in string form and parses it as per the RFC339 standard layout
 func parseYear(dateString string) int {
 	var year int
 
@@ -222,11 +237,14 @@ func parseYear(dateString string) int {
 	return year
 }
 
+// HandleGetCoverArt handles the getCoverArt request from the client
+// it extracts the id from the client's request and requests CoverArt from iTunes
+// which is then saved in the coverPath, the server then writes the image as a response to the client.
 func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
 	id := query.Get("id")
-	// Not supporting Size for now, Its better to cache a larger image than multiple smaller ones, reduces strain on iTunes & allium
+	// TODO: Support size parameter
 
 	coverPath, err := s.metadata.GetAlbumCover(id)
 	if err != nil {

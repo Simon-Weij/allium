@@ -12,7 +12,7 @@ import (
 type Config struct {
 	Username string `toml:"username"`
 	Password string `toml:"password"`
-	Data     string `toml:"data"`
+	Data     string `toml:"data"` // The path where the user data would be stored
 }
 
 const (
@@ -22,6 +22,7 @@ const (
 
 var ErrConfigDirNotFound = errors.New("config dir not found")
 
+// ParseConfig parses the configuration data stored in configDir/allium
 func ParseConfig() (*Config, error) {
 	var cfg Config
 
@@ -56,6 +57,7 @@ func ParseConfig() (*Config, error) {
 	return &cfg, nil
 }
 
+// requireNotEmpty panics if v is empty
 func requireNotEmpty(v string) {
 	if v == "" {
 		panic(v + " is empty")
