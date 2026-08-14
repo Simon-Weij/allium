@@ -54,6 +54,7 @@ func main() {
 
 		// Browsing
 		router.Get("/getAlbum.view", server.HandleGetAlbum)
+		router.Get("/getArtist.view", server.HandleGetArtist)
 	})
 
 	slog.Info("starting app...")

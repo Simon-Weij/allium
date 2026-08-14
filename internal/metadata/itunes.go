@@ -116,6 +116,21 @@ func (m Metadata) GetSongById(id string) (*ITunesResponse, error) {
 	return &res, nil
 }
 
+func (m Metadata) GetArtistById(id string) (*ITunesResponse, error) {
+	var res ITunesResponse
+	if _, err := m.client.R().
+		SetQueryParam("id", id).
+		SetQueryParam("media", "music").
+		SetQueryParam("entity", "album").
+		SetResponseForceContentType("application/json").
+		SetResult(&res).
+		Get(baseLookupUrl); err != nil {
+		return nil, fmt.Errorf("failed to get artist by id: %s %w", id, err)
+	}
+
+	return &res, nil
+}
+
 func (m Metadata) GetAlbumMetadata(albumId string) (*ITunesResponse, error) {
 	var res ITunesResponse
 	if _, err := m.client.R().

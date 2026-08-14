@@ -24,6 +24,7 @@ type (
 		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
 		SearchResult3          *SearchResult3           `json:"searchResult3,omitempty"`
 		Album                  *GetAlbumAlbum           `json:"album,omitempty"`
+		Artist                 *GetArtistArtist         `json:"artist,omitempty"`
 		Error                  *Error                   `json:"error,omitempty"`
 	}
 
@@ -106,6 +107,37 @@ type (
 		Song      []Song `json:"song"`
 	}
 
+	GetArtistArtist struct {
+		Id             string           `json:"id"`
+		Name           string           `json:"name"`
+		CoverArt       string           `json:"coverArt,omitempty"`
+		AlbumCount     int              `json:"albumCount,omitempty"`
+		UserRating     int              `json:"userRating,omitempty"`
+		ArtistImageUrl string           `json:"artistImageUrl,omitempty"`
+		Album          []GetArtistAlbum `json:"album,omitempty"`
+	}
+
+	GetArtistAlbum struct {
+		Id            string `json:"id"`
+		Parent        string `json:"parent"`
+		Album         string `json:"album"`
+		Title         string `json:"title"`
+		Name          string `json:"name"`
+		IsDir         bool   `json:"isDir"`
+		CoverArt      string `json:"coverArt"`
+		SongCount     int    `json:"songCount"`
+		Created       string `json:"created"`
+		Duration      int    `json:"duration"`
+		PlayCount     int    `json:"playCount"`
+		ArtistId      string `json:"artistId"`
+		Artist        string `json:"artist"`
+		Year          int    `json:"year"`
+		Genre         string `json:"genre"`
+		UserRating    int    `json:"userRating,omitempty"`
+		AverageRating int    `json:"averageRating,omitempty"`
+		Starred       string `json:"starred,omitempty"`
+	}
+
 	SearchResult3Album struct {
 		Id         string `json:"id"`
 		Name       string `json:"name"`
@@ -165,6 +197,7 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			OpenSubSonicExtensions: nil,
 			SearchResult3:          nil,
 			Album:                  nil,
+			Artist:                 nil,
 
 			Error: nil,
 		},

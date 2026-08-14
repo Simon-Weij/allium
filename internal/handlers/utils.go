@@ -74,6 +74,56 @@ func ConvertItunesAlbum(response *metadata.ITunesResponse) GetAlbumAlbum {
 	}
 }
 
+func ConvertItunesArtist(response *metadata.ITunesResponse) GetArtistArtist {
+	var (
+		artist GetArtistArtist
+		albums = []GetArtistAlbum{}
+	)
+
+	for _, result := range response.Results {
+		switch result.WrapperType {
+		case itunesWrapperArtist:
+			artist.Id = strconv.Itoa(result.ArtistID)
+			artist.Name = result.ArtistName
+			artist.CoverArt = result.ArtworkURL100
+			artist.UserRating = userRatingPlaceholder
+			artist.ArtistImageUrl = result.ArtworkURL100
+		case itunesWrapperCollection:
+			albums = append(albums, convertItunesArtistAlbum(result))
+		default:
+			slog.Error("unknown type", "result", result)
+		}
+	}
+
+	artist.AlbumCount = len(albums)
+	artist.Album = albums
+
+	return artist
+}
+
+func convertItunesArtistAlbum(result metadata.ITunesResult) GetArtistAlbum {
+	return GetArtistAlbum{
+		Id:            strconv.Itoa(result.CollectionID),
+		Parent:        strconv.Itoa(result.ArtistID),
+		Album:         result.CollectionName,
+		Title:         result.CollectionName,
+		Name:          result.CollectionName,
+		IsDir:         true,
+		CoverArt:      result.ArtworkURL100,
+		SongCount:     result.TrackCount,
+		Created:       result.ReleaseDate,
+		Duration:      albumDurationPlaceholder,
+		PlayCount:     albumPlayCountPlaceholder,
+		ArtistId:      strconv.Itoa(result.ArtistID),
+		Artist:        result.ArtistName,
+		Year:          parseYear(result.ReleaseDate),
+		Genre:         result.PrimaryGenreName,
+		UserRating:    userRatingPlaceholder,
+		AverageRating: 0,
+		Starred:       "",
+	}
+}
+
 func convertItunesSong(result metadata.ITunesResult) Song {
 	return Song{
 		Id:           strconv.Itoa(result.TrackID),
