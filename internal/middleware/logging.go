@@ -15,6 +15,7 @@ type statusRecorder struct {
 }
 
 const (
+	magenta = "\u001b[35m"
 	red    = "\033[31m"
 	green  = "\033[32m"
 	yellow = "\033[33m"
@@ -55,6 +56,7 @@ func statusColor(status int) string {
 	}
 }
 
+// Logging Middleware, Logs Request Method, Method URL Path, URL and time taken to satisfy request
 func WithLogging(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -67,11 +69,14 @@ func WithLogging(next http.Handler) http.Handler {
 		next.ServeHTTP(statusRecorder, r)
 
 		log.Printf(
-			"%s%s%s %s %s%d%s %v",
+			"%s%s%s %s%s%s %s %s%d%s %v",
 			cyan,
 			strconv.Quote(r.Method),
 			reset,
 			strconv.Quote(r.URL.Path),
+			magenta,
+			strconv.Quote(r.URL.String()),
+			reset,
 			statusColor(statusRecorder.status),
 			statusRecorder.status,
 			reset,

@@ -53,6 +53,7 @@ var (
 	errCreatingDirs      = errors.New("couldn't create directories")
 )
 
+
 func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
 	entities := []string{"song", "album", "musicArtist"}
 
@@ -146,6 +147,8 @@ func (m Metadata) GetAlbumMetadata(albumId string) (*ITunesResponse, error) {
 	return &res, nil
 }
 
+// downloadAlbumCover downloads the album cover from the artworkURL,
+// the downloaded cover is saved to the target destination
 func (m Metadata) downloadAlbumCover(artworkURL, target string) error {
 	coverURL, err := coverArtURL(artworkURL)
 	if err != nil {

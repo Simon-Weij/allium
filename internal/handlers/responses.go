@@ -204,6 +204,8 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 	}
 }
 
+// WriteJSON is a helper function, it writes the response to the client, 
+// in a JSON format
 func WriteJSON(w http.ResponseWriter, status int, body any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
