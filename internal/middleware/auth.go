@@ -17,6 +17,10 @@ const (
 	ErrParameterMissing                    = 10
 )
 
+
+// Authenticate Middleware, checks if client has Token Authentication, Unsupported Auth or Conflicting Authentication Methods
+// returning errors to the client if using Conflicting or Unsupported Authentication methods
+// Also returns errors if the client credentials are invalid.
 func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -75,6 +79,8 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 	}
 }
 
+// isValidUser checks if the user's username and password are correct,
+// returing a http.StatusUnauthorized to the client, if neither the username or the password is valid.
 func isValidUser(
 	w http.ResponseWriter,
 	cfg config.Config,
@@ -94,6 +100,8 @@ func isValidUser(
 	}
 }
 
+// matchToken calculates a MD5 hashsum from the storedPassword & salt,
+// and ConstantTimeCompares the hashsum and token, returning a boolean value (1 if match, 0 if no match)
 func matchToken(storedPassword, salt, token string) bool {
 	sum := md5.Sum([]byte(storedPassword + salt))
 

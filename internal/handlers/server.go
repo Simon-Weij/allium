@@ -10,6 +10,7 @@ type Server struct {
 	metadata *metadata.Metadata
 }
 
+// NewServer creates a Server with the specified configuration
 func NewServer(cfg config.Config) *Server {
 	return &Server{
 		cfg:      cfg,
