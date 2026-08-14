@@ -59,79 +59,6 @@ func trimToLimit[T any](items []T, count int) []T {
 	return items
 }
 
-// convertItunesOpenSubsonic converts data returned by iTunes into OpenSubsonic compatible data
-func convertItunesOpenSubsonic(results []metadata.ITunesResult) ResultTypes {
-	songs := []Song{}
-	artists := []Artist{}
-	albums := []Album{}
-
-	for _, result := range results {
-		switch result.WrapperType {
-		case itunesWrapperTrack:
-			songs = append(songs, Song{
-				Id:           strconv.Itoa(result.TrackID),
-				Parent:       strconv.Itoa(result.CollectionID),
-				Title:        result.TrackName,
-				IsDir:        false,
-				IsVideo:      false,
-				Type:         songType,
-				AlbumId:      strconv.Itoa(result.CollectionID),
-				Album:        result.CollectionName,
-				ArtistId:     strconv.Itoa(result.ArtistID),
-				Artist:       result.ArtistName,
-				CoverArt:     result.ArtworkURL100,
-				Duration:     result.TrackTimeMillis / millisPerSecond,
-				BitRate:      songBitRate,
-				BitDepth:     songBitDepth,
-				Size:         0,
-				SamplingRate: songSamplingRate,
-				ChannelCount: songChannelCount,
-				Track:        result.TrackNumber,
-				Year:         parseYear(result.ReleaseDate),
-				Genre:        result.PrimaryGenreName,
-				DiscNumber:   result.DiscNumber,
-				Suffix:       songSuffix,
-				ContentType:  songContentType,
-				Path:         songPath,
-			})
-		case itunesWrapperCollection:
-			albums = append(albums, Album{
-				Id:         strconv.Itoa(result.CollectionID),
-				Name:       result.CollectionName,
-				Artist:     result.ArtistName,
-				Year:       parseYear(result.ReleaseDate),
-				CoverArt:   result.ArtworkURL100,
-				Starred:    result.ReleaseDate,
-				Duration:   albumDurationPlaceholder,
-				PlayCount:  albumPlayCountPlaceholder,
-				Played:     playedPlaceholderDate,
-				Created:    result.ReleaseDate,
-				ArtistId:   strconv.Itoa(result.ArtistID),
-				UserRating: userRatingPlaceholder,
-				SongCount:  result.TrackCount,
-			})
-		case itunesWrapperArtist:
-			artists = append(artists, Artist{
-				Id:             strconv.Itoa(result.ArtistID),
-				Name:           result.ArtistName,
-				CoverArt:       result.ArtworkURL100,
-				AlbumCount:     artistAlbumCountPlaceholder,
-				UserRating:     userRatingPlaceholder,
-				ArtistImageUrl: result.ArtworkURL100,
-			})
-
-		default:
-			slog.Error("unknown type", "result", result)
-		}
-	}
-
-	return ResultTypes{
-		songs:   songs,
-		albums:  albums,
-		artists: artists,
-	}
-}
-
 // parseQueries parses the queries from the client's request URL, 
 // It extracts all the keys and value pairs from the query and formats them in a Queries object
 // Populating empty keys with the default values. 
@@ -192,20 +119,6 @@ func queryInt(query url.Values, key string, def int) (int, error) {
 	}
 
 	return n, nil
-}
-
-// parseYear takes a date in string form and parses it as per the RFC339 standard layout
-func parseYear(dateString string) int {
-	var year int
-
-	t, err := time.Parse(time.RFC3339, dateString)
-	if err != nil {
-		year = 0
-	} else {
-		year = t.Year()
-	}
-
-	return year
 }
 
 // HandleGetCoverArt handles the getCoverArt request from the client
