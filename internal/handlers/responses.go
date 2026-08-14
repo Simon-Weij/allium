@@ -23,6 +23,7 @@ type (
 		User                   *User                    `json:"user,omitempty"`
 		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
 		SearchResult3          *SearchResult3           `json:"searchResult3,omitempty"`
+		Album                  *GetAlbumAlbum           `json:"album,omitempty"`
 		Error                  *Error                   `json:"error,omitempty"`
 	}
 
@@ -86,7 +87,26 @@ type (
 		Path         string `json:"path"`
 	}
 
-	Album struct {
+	GetAlbumAlbum struct {
+		Id        string `json:"id"`
+		Parent    string `json:"parent"`
+		Album     string `json:"album"`
+		Title     string `json:"title"`
+		Name      string `json:"name"`
+		IsDir     bool   `json:"isDir"`
+		CoverArt  string `json:"coverArt"`
+		SongCount int    `json:"songCount"`
+		Created   string `json:"created"`
+		Duration  int    `json:"duration"`
+		PlayCount int    `json:"playCount"`
+		ArtistId  string `json:"artistId"`
+		Artist    string `json:"artist"`
+		Year      int    `json:"year"`
+		Genre     string `json:"genre"`
+		Song      []Song `json:"song"`
+	}
+
+	SearchResult3Album struct {
 		Id         string `json:"id"`
 		Name       string `json:"name"`
 		Artist     string `json:"artist"`
@@ -103,9 +123,9 @@ type (
 	}
 
 	SearchResult3 struct {
-		Artist []Artist `json:"artist,omitempty"`
-		Album  []Album  `json:"album,omitempty"`
-		Song   []Song   `json:"song,omitempty"`
+		Artist []Artist             `json:"artist,omitempty"`
+		Album  []SearchResult3Album `json:"album,omitempty"`
+		Song   []Song               `json:"song,omitempty"`
 	}
 
 	Artist struct {
@@ -147,6 +167,7 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			User:                   nil,
 			OpenSubSonicExtensions: nil,
 			SearchResult3:          nil,
+			Album:                  nil,
 
 			Error: nil,
 		},

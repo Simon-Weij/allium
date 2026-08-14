@@ -4,11 +4,13 @@ import (
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/Simon-Weij/allium/internal/testutil"
 )
 
 func TestPing(t *testing.T) {
 	t.Parallel()
-	cfg := setupTestingConfig(t)
+	cfg := testutil.SetupTestingConfig(t)
 	server := NewServer(cfg)
 	res := NewEmptyResponse(cfg)
 
@@ -23,7 +25,7 @@ func TestPing(t *testing.T) {
 
 func TestLicense(t *testing.T) {
 	t.Parallel()
-	cfg := setupTestingConfig(t)
+	cfg := testutil.SetupTestingConfig(t)
 	server := NewServer(cfg)
 	res := NewEmptyResponse(cfg)
 
@@ -46,7 +48,7 @@ func TestLicense(t *testing.T) {
 
 func TestHandleGetOpenSubSonicExtensions(t *testing.T) {
 	t.Parallel()
-	cfg := setupTestingConfig(t)
+	cfg := testutil.SetupTestingConfig(t)
 	server := NewServer(cfg)
 	res := NewEmptyResponse(cfg)
 

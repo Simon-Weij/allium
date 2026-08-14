@@ -10,48 +10,19 @@ import (
 	"net/url"
 	"os"
 	"strconv"
-	"time"
 
+	"github.com/Simon-Weij/allium/internal/errors"
 	"github.com/Simon-Weij/allium/internal/metadata"
 )
 
-type (
-	Queries struct {
-		ArtistCount int
-		SongCount   int
-		AlbumCount  int
-		res         *metadata.ITunesResponse
-	}
-	ResultTypes struct {
-		songs   []Song
-		artists []Artist
-		albums  []Album
-	}
-)
+type Queries struct {
+	ArtistCount int
+	SongCount   int
+	AlbumCount  int
+	res         *metadata.ITunesResponse
+}
 
-const (
-	defaultSearchLimit = 20 // The default limit for number of items returned for each artist, album and song by the server
-	millisPerSecond    = 1000
-
-	itunesWrapperTrack      = "track"
-	itunesWrapperCollection = "collection"
-	itunesWrapperArtist     = "artist"
-
-	songType         = "music"
-	songSuffix       = "mp3"
-	songContentType  = "audio/mpeg"
-	songPath         = "/home/alice/Music"
-	songBitRate      = 320
-	songBitDepth     = 24
-	songSamplingRate = 48000
-	songChannelCount = 2
-
-	albumDurationPlaceholder    = 30000
-	albumPlayCountPlaceholder   = 8
-	artistAlbumCountPlaceholder = 5
-	userRatingPlaceholder       = 5
-	playedPlaceholderDate       = "2023-03-28T00:45:13Z"
-)
+const defaultSearchLimit = 20 // The default limit for number of items returned for each artist, album and song by the server
 
 // HandleSearch3 handles the search3 endpoint client requests
 // It parses the client query parameters and trims the search results to the search default limit
@@ -59,7 +30,7 @@ const (
 func (s Server) HandleSearch3(w http.ResponseWriter, r *http.Request) {
 	queries := parseQueries(w, r, s.metadata)
 
-	resultTypes := convertItunesOpenSubsonic(queries.res.Results)
+	resultTypes := ConvertItunesOpenSubsonic(queries.res.Results)
 
 	resultTypes.songs = trimToLimit(resultTypes.songs, queries.SongCount)
 	resultTypes.artists = trimToLimit(resultTypes.artists, queries.ArtistCount)
@@ -263,4 +234,34 @@ func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/png")
 
 	_, _ = w.Write(imageBytes)
+}
+
+func (s Server) HandleStream(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	query := r.URL.Query()
+
+	id := query.Get("id")
+	if id == "" {
+		http.Error(w, "id is required", errors.ErrParameterMissing)
+	}
+
+	res, err := s.metadata.GetSongById(id)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		slog.Error("couldn't get song by id", "error", err)
+
+		return
+	}
+
+	song := res.Results[0]
+
+	path, err := s.metadata.DownloadOrGetSong(ctx, song.ArtistName, song.TrackName)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		slog.Error("couldn't download song", "error", err)
+
+		return
+	}
+
+	http.ServeFile(w, r, path)
 }

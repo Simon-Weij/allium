@@ -129,10 +129,10 @@ func baseITunesAlbum(t *testing.T) metadata.ITunesResult {
 	}
 }
 
-func baseExpectedAlbum(t *testing.T) Album {
+func baseExpectedAlbum(t *testing.T) SearchResult3Album {
 	t.Helper()
 
-	return Album{
+	return SearchResult3Album{
 		Id:         "444555666",
 		Name:       "Test Album",
 		Artist:     "Test Artist",
@@ -158,7 +158,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 			baseITunesTrack(t),
 		}
 
-		got := convertItunesOpenSubsonic(input)
+		got := ConvertItunesOpenSubsonic(input)
 
 		assert.Len(t, got.songs, 1)
 		assert.Equal(t, baseExpectedSong(t), got.songs[0])
@@ -169,7 +169,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		track := baseITunesTrack(t)
 		track.ReleaseDate = ""
 
-		got := convertItunesOpenSubsonic([]metadata.ITunesResult{track})
+		got := ConvertItunesOpenSubsonic([]metadata.ITunesResult{track})
 
 		expected := baseExpectedSong(t)
 		expected.Year = 0
@@ -183,7 +183,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		track := baseITunesTrack(t)
 		track.TrackTimeMillis = 0
 
-		got := convertItunesOpenSubsonic([]metadata.ITunesResult{track})
+		got := ConvertItunesOpenSubsonic([]metadata.ITunesResult{track})
 
 		expected := baseExpectedSong(t)
 		expected.Duration = 0
@@ -197,7 +197,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		track := baseITunesTrack(t)
 		track.ArtworkURL100 = ""
 
-		got := convertItunesOpenSubsonic([]metadata.ITunesResult{track})
+		got := ConvertItunesOpenSubsonic([]metadata.ITunesResult{track})
 
 		expected := baseExpectedSong(t)
 		expected.CoverArt = ""
@@ -211,7 +211,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		track := baseITunesTrack(t)
 		track.WrapperType = "unknown-type"
 
-		got := convertItunesOpenSubsonic([]metadata.ITunesResult{track})
+		got := ConvertItunesOpenSubsonic([]metadata.ITunesResult{track})
 
 		assert.Empty(t, got.songs)
 		assert.Empty(t, got.albums)
@@ -224,7 +224,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 			baseITunesAlbum(t),
 		}
 
-		got := convertItunesOpenSubsonic(input)
+		got := ConvertItunesOpenSubsonic(input)
 
 		assert.Len(t, got.albums, 1)
 		assert.Equal(t, baseExpectedAlbum(t), got.albums[0])
@@ -235,7 +235,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		album := baseITunesAlbum(t)
 		album.ReleaseDate = ""
 
-		got := convertItunesOpenSubsonic([]metadata.ITunesResult{album})
+		got := ConvertItunesOpenSubsonic([]metadata.ITunesResult{album})
 
 		expected := baseExpectedAlbum(t)
 		expected.Year = 0
@@ -251,7 +251,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		album := baseITunesAlbum(t)
 		album.ArtworkURL100 = ""
 
-		got := convertItunesOpenSubsonic([]metadata.ITunesResult{album})
+		got := ConvertItunesOpenSubsonic([]metadata.ITunesResult{album})
 
 		expected := baseExpectedAlbum(t)
 		expected.CoverArt = ""
@@ -265,7 +265,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		album := baseITunesAlbum(t)
 		album.TrackCount = 0
 
-		got := convertItunesOpenSubsonic([]metadata.ITunesResult{album})
+		got := ConvertItunesOpenSubsonic([]metadata.ITunesResult{album})
 
 		expected := baseExpectedAlbum(t)
 		expected.SongCount = 0
@@ -286,7 +286,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 			PrimaryGenreName: "Genre",
 		}
 
-		got := convertItunesOpenSubsonic([]metadata.ITunesResult{
+		got := ConvertItunesOpenSubsonic([]metadata.ITunesResult{
 			artistInput,
 		})
 
@@ -299,7 +299,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	t.Run("empty input returns empty ResultTypes", func(t *testing.T) {
 		t.Parallel()
 
-		got := convertItunesOpenSubsonic([]metadata.ITunesResult{})
+		got := ConvertItunesOpenSubsonic([]metadata.ITunesResult{})
 
 		assert.Empty(t, got.songs)
 		assert.Empty(t, got.albums)
@@ -309,7 +309,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 	t.Run("nil input returns empty ResultTypes", func(t *testing.T) {
 		t.Parallel()
 
-		got := convertItunesOpenSubsonic(nil)
+		got := ConvertItunesOpenSubsonic(nil)
 
 		assert.Empty(t, got.songs)
 		assert.Empty(t, got.albums)

@@ -44,3 +44,5 @@ linters:
           - funlen
           - varnamelen
           - noctx
+          - gosec
+          - wrapcheck

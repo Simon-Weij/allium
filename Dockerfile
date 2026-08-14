@@ -14,13 +14,20 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     go build -trimpath -ldflags="-s -w" -o /output/allium ./cmd/server \
     && mkdir -p /output/cache
 
-FROM gcr.io/distroless/static-debian13:nonroot
+FROM alpine:3.24.1
+
+RUN apk add --no-cache \
+    yt-dlp=2026.07.04-r0 \
+    ffmpeg=8.1.2-r0 \
+    deno=2.7.4-r2
+
+USER guest
 
 WORKDIR /app
 
 ENV XDG_CACHE_HOME=/app/cache
 
 COPY --from=build /output/allium /app/allium
-COPY --from=build --chown=65532:65532 /output/cache /app/cache
+COPY --from=build --chown=guest:guest /output/cache /app/cache
 
 CMD ["/app/allium"]

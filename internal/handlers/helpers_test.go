@@ -7,22 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/Simon-Weij/allium/internal/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func setupTestingConfig(t *testing.T) config.Config {
-	t.Helper()
-
-	cfg := config.Config{
-		Username: "alice",
-		Password: "secret",
-		Data:     "",
-	}
-
-	return cfg
-}
 
 func assertJSONResponse(
 	t *testing.T,
