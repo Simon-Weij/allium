@@ -6,18 +6,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/Simon-Weij/allium/internal/config"
-	"resty.dev/v3"
 )
 
 type (
-	Metadata struct {
-		client     *resty.Client
-		cfg        config.Config
-		downloader downloader
-	}
-
 	ITunesResponse struct {
 		ResultCount int            `json:"resultCount"`
 		Results     []ITunesResult `json:"results"`
@@ -61,18 +52,6 @@ var (
 	errInvalidArtworkURL = errors.New("invalid artwork url")
 	errCreatingDirs      = errors.New("couldn't create directories")
 )
-
-func NewMetadata(cfg config.Config) *Metadata {
-	metadata := &Metadata{
-		client: resty.New(),
-		cfg:    cfg,
-
-		downloader: nil,
-	}
-	metadata.downloader = metadata
-
-	return metadata
-}
 
 func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
 	entities := []string{"song", "album", "musicArtist"}
@@ -120,6 +99,21 @@ func (m Metadata) GetAlbumCover(id string) (string, error) {
 	}
 
 	return coverPath, nil
+}
+
+func (m Metadata) GetSongById(id string) (*ITunesResponse, error) {
+	var res ITunesResponse
+	if _, err := m.client.R().
+		SetQueryParam("id", id).
+		SetQueryParam("media", "music").
+		SetQueryParam("entity", "song").
+		SetResponseForceContentType("application/json").
+		SetResult(&res).
+		Get(baseLookupUrl); err != nil {
+		return nil, fmt.Errorf("failed to get song by id: %s: %w", id, err)
+	}
+
+	return &res, nil
 }
 
 func (m Metadata) GetAlbumMetadata(albumId string) (*ITunesResponse, error) {

@@ -7,14 +7,8 @@ import (
 	"net/http"
 
 	"github.com/Simon-Weij/allium/internal/config"
+	"github.com/Simon-Weij/allium/internal/errors"
 	"github.com/Simon-Weij/allium/internal/handlers"
-)
-
-const (
-	ErrWrongCredentials                    = 10
-	ErrNotSupported                        = 42
-	ErrConflictingAuthenticationMechanisms = 43
-	ErrParameterMissing                    = 10
 )
 
 func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
@@ -37,7 +31,7 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 					w,
 					http.StatusBadRequest,
 					cfg,
-					ErrConflictingAuthenticationMechanisms,
+					errors.ErrConflictingAuthenticationMechanisms,
 					"Conflicting auth methods",
 				)
 
@@ -49,7 +43,7 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 					w,
 					http.StatusBadRequest,
 					cfg,
-					ErrNotSupported,
+					errors.ErrNotSupported,
 					"Auth method not supported",
 				)
 
@@ -61,7 +55,7 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 					w,
 					http.StatusBadRequest,
 					cfg,
-					ErrParameterMissing,
+					errors.ErrParameterMissing,
 					"Required parameter is missing",
 				)
 
@@ -88,7 +82,7 @@ func isValidUser(
 			w,
 			http.StatusUnauthorized,
 			cfg,
-			ErrWrongCredentials,
+			errors.ErrWrongCredentials,
 			"Wrong username or password",
 		)
 	}

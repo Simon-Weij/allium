@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	readTimeout                    = 5 * time.Second
-	writeTimeout                   = 10 * time.Second
+	readTimeout                    = 45 * time.Second
+	writeTimeout                   = 30 * time.Second
 	idleTimeout                    = 120 * time.Second
 	dataDirPermissions os.FileMode = 0o750
 )
@@ -49,6 +49,8 @@ func main() {
 		// Clarification
 		router.Get("/search3.view", server.HandleSearch3)
 		router.Get("/getCoverArt.view", server.HandleGetCoverArt)
+		router.Get("/stream.view", server.HandleStream)
+		router.Get("/stream.view/", server.HandleStream)
 
 		// Browsing
 		router.Get("/getAlbum.view", server.HandleGetAlbum)

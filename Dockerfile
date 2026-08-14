@@ -16,7 +16,10 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 FROM alpine:3.24.1
 
-RUN apk add --no-cache yt-dlp
+RUN apk add --no-cache \
+    yt-dlp=2026.07.04-r0 \
+    ffmpeg=8.1.2-r0 \
+    deno=2.7.4-r2
 
 USER guest
 
