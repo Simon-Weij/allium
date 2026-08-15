@@ -22,3 +22,5 @@ pre-commit:
     just format
     just vet
     just tidy
+create-migration name:
+    goose -dir internal/database/migrations create {{name}} sql

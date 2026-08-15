@@ -5,9 +5,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      CONFIG_PATH: /config/config.toml
+      ALLIUM_USERNAME: ${ALLIUM_USERNAME:-alice}
+      ALLIUM_PASSWORD: ${ALLIUM_PASSWORD:-changeme}
     volumes:
-      - ./config/config.toml:/config/config.toml:ro
       - data:/data
     develop:
       watch:

@@ -18,6 +18,8 @@ linters:
     errcheck:
       exclude-functions:
         - (io.Closer).Close
+        - (*database/sql.DB).Close
+        - (*database/sql.Rows).Close
     copyloopvar:
       check-alias: true
     decorder:
@@ -29,12 +31,14 @@ linters:
         - G304
         - G703
         - G705
+        - G104
     varnamelen:
       ignore-decls:
         - w http.ResponseWriter
         - r *http.Request
       ignore-names:
         - id
+        - db
     funlen:
       lines: 80
   exclusions:
