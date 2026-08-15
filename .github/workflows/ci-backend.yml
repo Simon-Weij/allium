@@ -11,6 +11,10 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      - uses: sqlc-dev/setup-sqlc@v5
+        with:
+          sqlc-version: '1.31.1'
+      - run: sqlc generate
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
@@ -22,6 +26,10 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      - uses: sqlc-dev/setup-sqlc@v5
+        with:
+          sqlc-version: '1.31.1'
+      - run: sqlc generate
       - run: DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock go test ./...
       - run: go test ./... -coverprofile=coverage.txt
       - name: Upload coverage reports to Codecov
@@ -35,6 +43,10 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      - uses: sqlc-dev/setup-sqlc@v5
+        with:
+          sqlc-version: '1.31.1'
+      - run: sqlc generate
       - run: go mod tidy && git diff --exit-code go.mod go.sum
   format-go:
     runs-on: ubuntu-latest
@@ -52,6 +64,10 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      - uses: sqlc-dev/setup-sqlc@v5
+        with:
+          sqlc-version: '1.31.1'
+      - run: sqlc generate
       - run: go vet ./...
   build:
     runs-on: ubuntu-latest
@@ -60,4 +76,8 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      - uses: sqlc-dev/setup-sqlc@v5
+        with:
+          sqlc-version: '1.31.1'
+      - run: sqlc generate
       - run: go build ./...

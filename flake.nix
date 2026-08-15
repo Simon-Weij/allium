@@ -15,6 +15,7 @@
           gofumpt
           just
           goose
+          sqlc
         ];
       };
     });

@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/Simon-Weij/allium/generated/sqlc"
 	"github.com/Simon-Weij/allium/internal/config"
 	"github.com/Simon-Weij/allium/internal/database"
 	"github.com/Simon-Weij/allium/internal/handlers"
@@ -54,7 +55,9 @@ func Run() error {
 		return fmt.Errorf("could not create data directory %s: %w", cfg.Data, err)
 	}
 
-	server := handlers.NewServer(*cfg)
+	queries := sqlc.New(db)
+
+	server := handlers.NewServer(*cfg, queries)
 
 	router := chi.NewRouter()
 	router.Use(middleware.WithLogging)
@@ -78,6 +81,9 @@ func Run() error {
 		// Browsing
 		router.Get("/getAlbum.view", server.HandleGetAlbum)
 		router.Get("/getArtist.view", server.HandleGetArtist)
+
+		// Media annotation
+		router.Get("/scrobble.view", server.HandleScrobble)
 	})
 
 	slog.Info("starting app...")
