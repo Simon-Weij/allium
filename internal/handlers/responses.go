@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Simon-Weij/allium/internal/config"
+	"github.com/Simon-Weij/allium/internal/database"
 )
 
 type (
@@ -20,7 +21,7 @@ type (
 		ServerVersion          string                   `json:"serverVersion"`
 		OpenSubsonic           bool                     `json:"openSubsonic"`
 		License                *License                 `json:"license,omitempty"`
-		User                   *User                    `json:"user,omitempty"`
+		User                   *database.User           `json:"user,omitempty"`
 		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
 		SearchResult3          *SearchResult3           `json:"searchResult3,omitempty"`
 		Album                  *GetAlbumAlbum           `json:"album,omitempty"`
@@ -43,22 +44,6 @@ type (
 	OpenSubSonicExtension struct {
 		Name    string
 		Version []int
-	}
-
-	User struct {
-		Folder            []int  `json:"folder"`
-		Email             string `json:"email"`
-		ScrobblingEnabled bool   `json:"scrobblingEnabled"`
-		AdminRole         bool   `json:"adminRole"`
-		SettingsRole      bool   `json:"settingsRole"`
-		DownloadRole      bool   `json:"downloadRole"`
-		PlaylistRole      bool   `json:"playlistRole"`
-		CoverArtRole      bool   `json:"coverArtRole"`
-		CommentRole       bool   `json:"commentRole"`
-		PodcastRole       bool   `json:"podcastRole"`
-		StreamRole        bool   `json:"streamRole"`
-		JukeboxRole       bool   `json:"jukeboxRole"`
-		ShareRole         bool   `json:"shareRole"`
 	}
 
 	Song struct {
