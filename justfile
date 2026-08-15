@@ -22,3 +22,5 @@ pre-commit:
     just format
     just vet
     just tidy
+sqlc-gen:
+    sqlc generate
