@@ -11,6 +11,7 @@ linters:
     - noinlineerr
     - errchkjson
     - tagliatelle
+    - gochecknoglobals
   settings:
     exhaustruct:
       include:

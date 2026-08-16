@@ -10,6 +10,7 @@ import (
 //go:generate mockgen -source=browsing.go -destination=mocks/browsing_mock.go -package=mocks
 type iTunesClient interface {
 	GetAlbumMetadata(albumId string) (*metadata.ITunesResponse, error)
+	GetArtistById(artistId string) (*metadata.ITunesResponse, error)
 }
 
 func (s Server) HandleGetAlbum(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +46,13 @@ func (s Server) HandleGetAlbum(w http.ResponseWriter, r *http.Request) {
 func (s Server) HandleGetArtist(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
-	res, err := s.metadata.GetArtistById(id)
+	if id == "" {
+		http.Error(w, "no id provided", http.StatusNotFound)
+
+		return
+	}
+
+	res, err := s.iTunesclient.GetArtistById(id)
 	if err != nil {
 		slog.Error("something went wrong trying to fetch metadata", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
