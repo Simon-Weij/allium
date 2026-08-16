@@ -17,6 +17,8 @@
           sqlc
           goose
           yamlfmt
+          goose
+          sqlc
         ];
       };
     });

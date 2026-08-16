@@ -10,9 +10,10 @@ func SetupTestingConfig(t *testing.T) config.Config {
 	t.Helper()
 
 	cfg := config.Config{
-		Username: "alice",
-		Password: "secret",
-		Data:     "",
+		Username:     "alice",
+		Password:     "secret",
+		Data:         "",
+		DatabasePath: "",
 	}
 
 	return cfg

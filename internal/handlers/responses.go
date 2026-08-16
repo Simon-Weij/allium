@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Simon-Weij/allium/generated/sqlc"
 	"github.com/Simon-Weij/allium/internal/config"
-	"github.com/Simon-Weij/allium/internal/database"
 )
 
 type (
@@ -21,7 +21,7 @@ type (
 		ServerVersion          string                   `json:"serverVersion"`
 		OpenSubsonic           bool                     `json:"openSubsonic"`
 		License                *License                 `json:"license,omitempty"`
-		User                   *database.User           `json:"user,omitempty"`
+		User                   *sqlc.User               `json:"user,omitempty"`
 		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
 		SearchResult3          *SearchResult3           `json:"searchResult3,omitempty"`
 		Album                  *GetAlbumAlbum           `json:"album,omitempty"`
