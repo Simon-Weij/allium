@@ -14,6 +14,9 @@
           golangci-lint
           gofumpt
           just
+          sqlc
+          goose
+          yamlfmt
           goose
           sqlc
         ];

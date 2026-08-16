@@ -24,5 +24,6 @@ pre-commit:
     just tidy
 create-migration name:
     goose -dir internal/database/migrations create {{name}} sql
+    goose fix
 generate:
     sqlc generate

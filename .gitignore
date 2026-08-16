@@ -1,4 +1,6 @@
 .direnv
 .env
 .git
+config/config.toml
+database.db
 generated
