@@ -50,3 +50,5 @@ linters:
           - noctx
           - gosec
           - wrapcheck
+          - err113
+          - goconst

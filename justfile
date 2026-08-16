@@ -25,4 +25,4 @@ pre-commit:
 create-migration name:
     goose -dir internal/database/migrations create {{name}} sql
 generate:
-    sqlc generate
+    go generate ./...

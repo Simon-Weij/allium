@@ -16,6 +16,7 @@
           just
           goose
           sqlc
+          mockgen
         ];
       };
     });

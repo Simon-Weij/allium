@@ -11,7 +11,7 @@ import (
 func TestPing(t *testing.T) {
 	t.Parallel()
 	cfg := testutil.SetupTestingConfig(t)
-	server := NewServer(cfg, nil)
+	server := NewServer(cfg, nil, nil)
 	res := NewEmptyResponse(cfg)
 
 	assertJSONResponse(
@@ -26,7 +26,7 @@ func TestPing(t *testing.T) {
 func TestLicense(t *testing.T) {
 	t.Parallel()
 	cfg := testutil.SetupTestingConfig(t)
-	server := NewServer(cfg, nil)
+	server := NewServer(cfg, nil, nil)
 	res := NewEmptyResponse(cfg)
 
 	licenseExpiry := time.Date(2222, 1, 1, 1, 1, 1, 1, time.UTC)
@@ -49,7 +49,7 @@ func TestLicense(t *testing.T) {
 func TestHandleGetOpenSubSonicExtensions(t *testing.T) {
 	t.Parallel()
 	cfg := testutil.SetupTestingConfig(t)
-	server := NewServer(cfg, nil)
+	server := NewServer(cfg, nil, nil)
 	res := NewEmptyResponse(cfg)
 
 	res.SubsonicResponse.OpenSubSonicExtensions = &[]OpenSubSonicExtension{}

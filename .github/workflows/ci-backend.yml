@@ -14,7 +14,8 @@ jobs:
       - uses: sqlc-dev/setup-sqlc@v5
         with:
           sqlc-version: '1.31.1'
-      - run: sqlc generate
+      - run: go install go.uber.org/mock/mockgen@latest
+      - run: go generate ./...
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
@@ -29,7 +30,8 @@ jobs:
       - uses: sqlc-dev/setup-sqlc@v5
         with:
           sqlc-version: '1.31.1'
-      - run: sqlc generate
+      - run: go install go.uber.org/mock/mockgen@latest
+      - run: go generate ./...
       - run: DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock go test ./...
       - run: go test ./... -coverprofile=coverage.txt
       - name: Upload coverage reports to Codecov
@@ -46,7 +48,8 @@ jobs:
       - uses: sqlc-dev/setup-sqlc@v5
         with:
           sqlc-version: '1.31.1'
-      - run: sqlc generate
+      - run: go install go.uber.org/mock/mockgen@latest
+      - run: go generate ./...
       - run: go mod tidy && git diff --exit-code go.mod go.sum
   format-go:
     runs-on: ubuntu-latest
@@ -55,6 +58,7 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      - run: go install go.uber.org/mock/mockgen@latest
       - run: go install mvdan.cc/gofumpt@latest
       - run: test -z "$(gofumpt -l .)"
   govet:
@@ -67,7 +71,8 @@ jobs:
       - uses: sqlc-dev/setup-sqlc@v5
         with:
           sqlc-version: '1.31.1'
-      - run: sqlc generate
+      - run: go install go.uber.org/mock/mockgen@latest
+      - run: go generate ./...
       - run: go vet ./...
   build:
     runs-on: ubuntu-latest
@@ -79,5 +84,6 @@ jobs:
       - uses: sqlc-dev/setup-sqlc@v5
         with:
           sqlc-version: '1.31.1'
-      - run: sqlc generate
+      - run: go install go.uber.org/mock/mockgen@latest
+      - run: go generate ./...
       - run: go build ./...

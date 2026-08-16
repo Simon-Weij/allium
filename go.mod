@@ -7,6 +7,7 @@ require (
 	github.com/lrstanley/go-ytdlp v1.3.5
 	github.com/pressly/goose/v3 v3.27.3
 	github.com/stretchr/testify v1.11.1
+	go.uber.org/mock v0.6.0
 	modernc.org/sqlite v1.56.0
 	resty.dev/v3 v3.0.0-rc.3
 )

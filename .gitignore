@@ -2,3 +2,4 @@
 .env
 .git
 generated
+**/mocks/**

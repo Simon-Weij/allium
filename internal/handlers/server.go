@@ -7,15 +7,21 @@ import (
 )
 
 type Server struct {
-	cfg      config.Config
-	metadata *metadata.Metadata
-	queries  *sqlc.Queries
+	cfg          config.Config
+	metadata     *metadata.Metadata
+	queries      *sqlc.Queries
+	iTunesclient iTunesClient
 }
 
-func NewServer(cfg config.Config, queries *sqlc.Queries) *Server {
+func NewServer(
+	cfg config.Config,
+	queries *sqlc.Queries,
+	iTunesClient iTunesClient,
+) *Server {
 	return &Server{
-		cfg:      cfg,
-		metadata: metadata.NewMetadata(cfg),
-		queries:  queries,
+		cfg:          cfg,
+		metadata:     metadata.NewMetadata(cfg),
+		queries:      queries,
+		iTunesclient: iTunesClient,
 	}
 }
