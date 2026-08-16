@@ -53,3 +53,5 @@ linters:
           - wrapcheck
           - err113
           - goconst
+          - exhaustruct
+          - musttag

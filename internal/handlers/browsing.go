@@ -3,15 +3,7 @@ package handlers
 import (
 	"log/slog"
 	"net/http"
-
-	"github.com/Simon-Weij/allium/internal/metadata"
 )
-
-//go:generate mockgen -source=browsing.go -destination=mocks/browsing_mock.go -package=mocks
-type iTunesClient interface {
-	GetAlbumMetadata(albumId string) (*metadata.ITunesResponse, error)
-	GetArtistById(artistId string) (*metadata.ITunesResponse, error)
-}
 
 func (s Server) HandleGetAlbum(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")

@@ -1,7 +1,5 @@
 package handlers
 
-// TODO: more tests
-
 import (
 	"fmt"
 	"log/slog"
@@ -18,13 +16,17 @@ type Queries struct {
 	ArtistCount int
 	SongCount   int
 	AlbumCount  int
+	SearchCount int
 	res         *metadata.ITunesResponse
 }
 
 const defaultSearchLimit = 20
 
 func (s Server) HandleSearch3(w http.ResponseWriter, r *http.Request) {
-	queries := parseQueries(w, r, s.metadata)
+	queries := parseQueries(w, r, s.iTunesclient)
+	if queries == nil {
+		return
+	}
 
 	resultTypes := ConvertItunesOpenSubsonic(queries.res.Results)
 
@@ -53,37 +55,50 @@ func trimToLimit[T any](items []T, count int) []T {
 	return items
 }
 
-func parseQueries(w http.ResponseWriter, r *http.Request, metadata *metadata.Metadata) *Queries {
+func parseQueries(w http.ResponseWriter, r *http.Request, client iTunesClient) *Queries {
 	query := r.URL.Query()
+
 	searchQuery := query.Get("query")
+	if searchQuery == "" {
+		http.Error(w, "bad request", http.StatusBadRequest)
+
+		return nil
+	}
 
 	var (
 		queries Queries
 		err     error
 	)
 
-	queries.ArtistCount, err = queryInt(query, "artistCount", defaultSearchLimit)
+	queries.ArtistCount, err = queryInt(query, "artistCount")
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
 
 		return nil
 	}
 
-	queries.AlbumCount, err = queryInt(query, "albumCount", defaultSearchLimit)
+	queries.AlbumCount, err = queryInt(query, "albumCount")
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
 
 		return nil
 	}
 
-	queries.SongCount, err = queryInt(query, "songCount", defaultSearchLimit)
+	queries.SongCount, err = queryInt(query, "songCount")
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
 
 		return nil
 	}
 
-	queries.res, err = metadata.SearchWithItunes(searchQuery)
+	queries.SearchCount, err = queryInt(query, "searchCount")
+	if err != nil {
+		http.Error(w, "bad request", http.StatusBadRequest)
+
+		return nil
+	}
+
+	queries.res, err = client.SearchWithItunes(searchQuery)
 	if err != nil {
 		slog.Error("something went wrong while searching with itunes", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -94,10 +109,10 @@ func parseQueries(w http.ResponseWriter, r *http.Request, metadata *metadata.Met
 	return &queries
 }
 
-func queryInt(query url.Values, key string, def int) (int, error) {
+func queryInt(query url.Values, key string) (int, error) {
 	v := query.Get(key)
 	if v == "" {
-		return def, nil
+		return defaultSearchLimit, nil
 	}
 
 	n, err := strconv.Atoi(v)
