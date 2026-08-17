@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/Simon-Weij/allium/internal/handlers/mocks"
+	"github.com/Simon-Weij/allium/generated/mocks"
 	"github.com/Simon-Weij/allium/internal/metadata"
 	"github.com/Simon-Weij/allium/internal/testutil"
 	"github.com/stretchr/testify/assert"
