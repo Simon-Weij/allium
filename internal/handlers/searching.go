@@ -5,11 +5,10 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 
-	"github.com/Simon-Weij/allium/internal/errors"
 	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
 type Queries struct {
@@ -18,6 +17,12 @@ type Queries struct {
 	AlbumCount  int
 	SearchCount int
 	res         *metadata.ITunesResponse
+}
+
+type ResultTypes struct {
+	songs   []subsonic.Song
+	artists []subsonic.Artist
+	albums  []subsonic.SearchResult3Album
 }
 
 const defaultSearchLimit = 20
@@ -34,13 +39,13 @@ func (s Server) HandleSearch3(w http.ResponseWriter, r *http.Request) {
 	resultTypes.artists = trimToLimit(resultTypes.artists, queries.ArtistCount)
 	resultTypes.albums = trimToLimit(resultTypes.albums, queries.AlbumCount)
 
-	res := NewEmptyResponse(s.cfg)
-	res.SubsonicResponse.SearchResult3 = &SearchResult3{
+	res := subsonic.NewEmptyResponse(s.cfg)
+	res.SubsonicResponse.SearchResult3 = &subsonic.SearchResult3{
 		Artist: resultTypes.artists,
 		Song:   resultTypes.songs,
 		Album:  resultTypes.albums,
 	}
-	WriteJSON(w, http.StatusOK, res)
+	subsonic.WriteJSON(w, http.StatusOK, res)
 }
 
 func trimToLimit[T any](items []T, count int) []T {
@@ -123,57 +128,49 @@ func queryInt(query url.Values, key string) (int, error) {
 	return n, nil
 }
 
-func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
+func ConvertItunesOpenSubsonic(results []metadata.ITunesResult) ResultTypes {
+	songs := []subsonic.Song{}
+	artists := []subsonic.Artist{}
+	albums := []subsonic.SearchResult3Album{}
 
-	id := query.Get("id")
-	// TODO: support size
+	for _, result := range results {
+		switch result.WrapperType {
+		case itunesWrapperTrack:
+			songs = append(songs, convertItunesSong(result))
+		case itunesWrapperCollection:
+			albums = append(albums, subsonic.SearchResult3Album{
+				Id:         strconv.Itoa(result.CollectionID),
+				Name:       result.CollectionName,
+				Artist:     result.ArtistName,
+				Year:       parseYear(result.ReleaseDate),
+				CoverArt:   result.ArtworkURL100,
+				Starred:    result.ReleaseDate,
+				Duration:   albumDurationPlaceholder,
+				PlayCount:  albumPlayCountPlaceholder,
+				Played:     playedPlaceholderDate,
+				Created:    result.ReleaseDate,
+				ArtistId:   strconv.Itoa(result.ArtistID),
+				UserRating: userRatingPlaceholder,
+				SongCount:  result.TrackCount,
+			})
+		case itunesWrapperArtist:
+			artists = append(artists, subsonic.Artist{
+				Id:             strconv.Itoa(result.ArtistID),
+				Name:           result.ArtistName,
+				CoverArt:       result.ArtworkURL100,
+				AlbumCount:     artistAlbumCountPlaceholder,
+				UserRating:     userRatingPlaceholder,
+				ArtistImageUrl: result.ArtworkURL100,
+			})
 
-	coverPath, err := s.metadata.GetAlbumCover(id)
-	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-
-		return
+		default:
+			slog.Error("unknown type", "result", result)
+		}
 	}
 
-	imageBytes, err := os.ReadFile(coverPath)
-	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-
-		return
+	return ResultTypes{
+		songs:   songs,
+		albums:  albums,
+		artists: artists,
 	}
-
-	w.Header().Set("Content-Type", "image/png")
-
-	_, _ = w.Write(imageBytes)
-}
-
-func (s Server) HandleStream(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	query := r.URL.Query()
-
-	id := query.Get("id")
-	if id == "" {
-		http.Error(w, "id is required", errors.ErrParameterMissing)
-	}
-
-	res, err := s.metadata.GetSongById(id)
-	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-		slog.Error("couldn't get song by id", "error", err)
-
-		return
-	}
-
-	song := res.Results[0]
-
-	path, err := s.metadata.DownloadOrGetSong(ctx, song.ArtistName, song.TrackName)
-	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-		slog.Error("couldn't download song", "error", err)
-
-		return
-	}
-
-	http.ServeFile(w, r, path)
 }

@@ -9,6 +9,7 @@ import (
 
 	"github.com/Simon-Weij/allium/generated/mocks"
 	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/subsonic"
 	"github.com/Simon-Weij/allium/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -121,7 +122,7 @@ func TestHandleSearch3(t *testing.T) {
 			assert.Equal(t, tt.expectedCode, rec.Code)
 
 			if tt.expectedSongCount > 0 {
-				var res SubsonicResponseWrapper
+				var res subsonic.SubsonicResponseWrapper
 
 				err := json.NewDecoder(rec.Body).Decode(&res)
 				require.NoError(t, err)
