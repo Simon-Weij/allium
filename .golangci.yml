@@ -11,6 +11,7 @@ linters:
     - noinlineerr
     - errchkjson
     - tagliatelle
+    - gochecknoglobals
   settings:
     exhaustruct:
       include:
@@ -50,3 +51,7 @@ linters:
           - noctx
           - gosec
           - wrapcheck
+          - err113
+          - goconst
+          - exhaustruct
+          - musttag

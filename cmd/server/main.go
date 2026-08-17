@@ -15,6 +15,7 @@ import (
 	"github.com/Simon-Weij/allium/internal/config"
 	"github.com/Simon-Weij/allium/internal/database"
 	"github.com/Simon-Weij/allium/internal/handlers"
+	"github.com/Simon-Weij/allium/internal/metadata"
 	"github.com/Simon-Weij/allium/internal/middleware"
 )
 
@@ -26,6 +27,7 @@ const (
 	dataDirPermissions os.FileMode = 0o750
 )
 
+//go:generate sqlc generate -f ../../sqlc.yml
 func main() {
 	if err := Run(); err != nil {
 		log.Fatal(err)
@@ -57,7 +59,7 @@ func Run() error {
 
 	queries := sqlc.New(db)
 
-	server := handlers.NewServer(*cfg, queries)
+	server := handlers.NewServer(*cfg, queries, metadata.NewMetadata(*cfg))
 
 	router := chi.NewRouter()
 	router.Use(middleware.WithLogging)

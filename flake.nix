@@ -19,6 +19,7 @@
           yamlfmt
           goose
           sqlc
+          mockgen
         ];
       };
     });

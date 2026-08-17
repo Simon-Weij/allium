@@ -4,3 +4,4 @@
 config/config.toml
 database.db
 generated
+**/mocks/**

@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	internalErrors "github.com/Simon-Weij/allium/internal/errors"
+	"github.com/Simon-Weij/allium/internal/subsonic"
 
 	_ "modernc.org/sqlite"
 )
@@ -15,7 +15,7 @@ func (s Server) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 	username := reqvalues.Get("username")
 
 	if username == "" {
-		http.Error(w, "username parameter missing", internalErrors.ErrParameterMissing)
+		http.Error(w, "username parameter missing", subsonic.ErrParameterMissing)
 	}
 
 	user, err := s.queries.GetUser(ctx, username)
@@ -26,8 +26,8 @@ func (s Server) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := NewEmptyResponse(s.cfg)
+	res := subsonic.NewEmptyResponse(s.cfg)
 	res.SubsonicResponse.User = &user
+	subsonic.WriteJSON(w, http.StatusOK, res)
 
-	WriteJSON(w, http.StatusOK, res)
 }

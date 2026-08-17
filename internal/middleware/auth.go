@@ -7,8 +7,7 @@ import (
 	"net/http"
 
 	"github.com/Simon-Weij/allium/internal/config"
-	"github.com/Simon-Weij/allium/internal/errors"
-	"github.com/Simon-Weij/allium/internal/handlers"
+	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
 func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
@@ -27,11 +26,11 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 			hasBothUnsupported := password != "" && apiKey != ""
 
 			if (hasTokenAuth && hasUnsupportedAuth) || hasBothUnsupported {
-				handlers.WriteError(
+				subsonic.WriteError(
 					w,
 					http.StatusBadRequest,
 					cfg,
-					errors.ErrConflictingAuthenticationMechanisms,
+					subsonic.ErrConflictingAuthenticationMechanisms,
 					"Conflicting auth methods",
 				)
 
@@ -39,11 +38,11 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 			}
 
 			if hasUnsupportedAuth {
-				handlers.WriteError(
+				subsonic.WriteError(
 					w,
 					http.StatusBadRequest,
 					cfg,
-					errors.ErrNotSupported,
+					subsonic.ErrNotSupported,
 					"Auth method not supported",
 				)
 
@@ -51,11 +50,11 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 			}
 
 			if username == "" || !hasTokenAuth {
-				handlers.WriteError(
+				subsonic.WriteError(
 					w,
 					http.StatusBadRequest,
 					cfg,
-					errors.ErrParameterMissing,
+					subsonic.ErrParameterMissing,
 					"Required parameter is missing",
 				)
 
@@ -78,11 +77,11 @@ func isValidUser(
 ) {
 	isValidUser := subtle.ConstantTimeCompare([]byte(cfg.Username), []byte(username)) == 1
 	if !isValidUser || !matchToken(cfg.Password, salt, token) {
-		handlers.WriteError(
+		subsonic.WriteError(
 			w,
 			http.StatusUnauthorized,
 			cfg,
-			errors.ErrWrongCredentials,
+			subsonic.ErrWrongCredentials,
 			"Wrong username or password",
 		)
 	}

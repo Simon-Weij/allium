@@ -1,4 +1,4 @@
-package errors
+package subsonic
 
 const (
 	ErrWrongCredentials                    = 10

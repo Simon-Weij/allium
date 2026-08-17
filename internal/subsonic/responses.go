@@ -1,4 +1,4 @@
-package handlers
+package subsonic
 
 import (
 	"encoding/json"
@@ -154,8 +154,6 @@ type (
 		ArtistImageUrl string `json:"artistImageUrl,omitempty"`
 	}
 )
-
-const testEmail = "irrelevant@example.com"
 
 func WriteError(w http.ResponseWriter, httpStatus int, cfg config.Config, code int, message string) {
 	res := NewEmptyResponse(cfg)

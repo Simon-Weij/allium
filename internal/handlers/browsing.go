@@ -3,12 +3,19 @@ package handlers
 import (
 	"log/slog"
 	"net/http"
+
+	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
 func (s Server) HandleGetAlbum(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
+	if id == "" {
+		http.Error(w, "no id provided", http.StatusNotFound)
 
-	res, err := s.metadata.GetAlbumMetadata(id)
+		return
+	}
+
+	res, err := s.iTunesclient.GetAlbumMetadata(id)
 	if err != nil {
 		slog.Error("something went wrong trying to fetch metadata", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -16,17 +23,30 @@ func (s Server) HandleGetAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(res.Results) == 0 {
+		slog.Info("no results found", "id", id)
+		http.Error(w, "couldn't find album with id: "+id, http.StatusNotFound)
+
+		return
+	}
+
 	album := ConvertItunesAlbum(res)
 
-	response := NewEmptyResponse(s.cfg)
+	response := subsonic.NewEmptyResponse(s.cfg)
 	response.SubsonicResponse.Album = &album
-	WriteJSON(w, http.StatusOK, response)
+	subsonic.WriteJSON(w, http.StatusOK, response)
 }
 
 func (s Server) HandleGetArtist(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
-	res, err := s.metadata.GetArtistById(id)
+	if id == "" {
+		http.Error(w, "no id provided", http.StatusNotFound)
+
+		return
+	}
+
+	res, err := s.iTunesclient.GetArtistById(id)
 	if err != nil {
 		slog.Error("something went wrong trying to fetch metadata", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -36,7 +56,7 @@ func (s Server) HandleGetArtist(w http.ResponseWriter, r *http.Request) {
 
 	artist := ConvertItunesArtist(res)
 
-	response := NewEmptyResponse(s.cfg)
+	response := subsonic.NewEmptyResponse(s.cfg)
 	response.SubsonicResponse.Artist = &artist
-	WriteJSON(w, http.StatusOK, response)
+	subsonic.WriteJSON(w, http.StatusOK, response)
 }

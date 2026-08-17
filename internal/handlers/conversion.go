@@ -6,13 +6,8 @@ import (
 	"time"
 
 	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/subsonic"
 )
-
-type ResultTypes struct {
-	songs   []Song
-	artists []Artist
-	albums  []SearchResult3Album
-}
 
 const (
 	millisPerSecond = 1000
@@ -35,10 +30,12 @@ const (
 	artistAlbumCountPlaceholder = 5
 	userRatingPlaceholder       = 5
 	playedPlaceholderDate       = "2023-03-28T00:45:13Z"
+
+	testEmail = "irrelevant@example.com"
 )
 
-func ConvertItunesAlbum(response *metadata.ITunesResponse) GetAlbumAlbum {
-	songs := make([]Song, 0, len(response.Results))
+func ConvertItunesAlbum(response *metadata.ITunesResponse) subsonic.GetAlbumAlbum {
+	songs := make([]subsonic.Song, 0, len(response.Results))
 
 	duration := 0
 
@@ -54,7 +51,7 @@ func ConvertItunesAlbum(response *metadata.ITunesResponse) GetAlbumAlbum {
 
 	song := songs[0]
 
-	return GetAlbumAlbum{
+	return subsonic.GetAlbumAlbum{
 		Id:        song.AlbumId,
 		Parent:    song.ArtistId,
 		Album:     song.Album,
@@ -74,10 +71,10 @@ func ConvertItunesAlbum(response *metadata.ITunesResponse) GetAlbumAlbum {
 	}
 }
 
-func ConvertItunesArtist(response *metadata.ITunesResponse) GetArtistArtist {
+func ConvertItunesArtist(response *metadata.ITunesResponse) subsonic.GetArtistArtist {
 	var (
-		artist GetArtistArtist
-		albums = []GetArtistAlbum{}
+		artist subsonic.GetArtistArtist
+		albums = []subsonic.GetArtistAlbum{}
 	)
 
 	for _, result := range response.Results {
@@ -101,8 +98,8 @@ func ConvertItunesArtist(response *metadata.ITunesResponse) GetArtistArtist {
 	return artist
 }
 
-func convertItunesArtistAlbum(result metadata.ITunesResult) GetArtistAlbum {
-	return GetArtistAlbum{
+func convertItunesArtistAlbum(result metadata.ITunesResult) subsonic.GetArtistAlbum {
+	return subsonic.GetArtistAlbum{
 		Id:            strconv.Itoa(result.CollectionID),
 		Parent:        strconv.Itoa(result.ArtistID),
 		Album:         result.CollectionName,
@@ -124,8 +121,8 @@ func convertItunesArtistAlbum(result metadata.ITunesResult) GetArtistAlbum {
 	}
 }
 
-func convertItunesSong(result metadata.ITunesResult) Song {
-	return Song{
+func convertItunesSong(result metadata.ITunesResult) subsonic.Song {
+	return subsonic.Song{
 		Id:           strconv.Itoa(result.TrackID),
 		Parent:       strconv.Itoa(result.CollectionID),
 		Title:        result.TrackName,
@@ -150,53 +147,6 @@ func convertItunesSong(result metadata.ITunesResult) Song {
 		Suffix:       songSuffix,
 		ContentType:  songContentType,
 		Path:         songPath,
-	}
-}
-
-func ConvertItunesOpenSubsonic(results []metadata.ITunesResult) ResultTypes {
-	songs := []Song{}
-	artists := []Artist{}
-	albums := []SearchResult3Album{}
-
-	for _, result := range results {
-		switch result.WrapperType {
-		case itunesWrapperTrack:
-			songs = append(songs, convertItunesSong(result))
-		case itunesWrapperCollection:
-			albums = append(albums, SearchResult3Album{
-				Id:         strconv.Itoa(result.CollectionID),
-				Name:       result.CollectionName,
-				Artist:     result.ArtistName,
-				Year:       parseYear(result.ReleaseDate),
-				CoverArt:   result.ArtworkURL100,
-				Starred:    result.ReleaseDate,
-				Duration:   albumDurationPlaceholder,
-				PlayCount:  albumPlayCountPlaceholder,
-				Played:     playedPlaceholderDate,
-				Created:    result.ReleaseDate,
-				ArtistId:   strconv.Itoa(result.ArtistID),
-				UserRating: userRatingPlaceholder,
-				SongCount:  result.TrackCount,
-			})
-		case itunesWrapperArtist:
-			artists = append(artists, Artist{
-				Id:             strconv.Itoa(result.ArtistID),
-				Name:           result.ArtistName,
-				CoverArt:       result.ArtworkURL100,
-				AlbumCount:     artistAlbumCountPlaceholder,
-				UserRating:     userRatingPlaceholder,
-				ArtistImageUrl: result.ArtworkURL100,
-			})
-
-		default:
-			slog.Error("unknown type", "result", result)
-		}
-	}
-
-	return ResultTypes{
-		songs:   songs,
-		albums:  albums,
-		artists: artists,
 	}
 }
 
