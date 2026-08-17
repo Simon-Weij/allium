@@ -2,6 +2,7 @@ FROM sqlc/sqlc:1.31.1 AS sqlc
 FROM golang:1.26.5-alpine3.24 AS build
 
 COPY --from=sqlc /workspace/sqlc /usr/bin/sqlc
+RUN apk add --no-cache git=2.54.0-r0 && go install go.uber.org/mock/mockgen@v0.6.0
 
 WORKDIR /app
 
