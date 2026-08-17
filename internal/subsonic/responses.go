@@ -22,6 +22,7 @@ type (
 		OpenSubsonic           bool                     `json:"openSubsonic"`
 		License                *License                 `json:"license,omitempty"`
 		User                   *sqlc.User               `json:"user,omitempty"`
+		Users *[]sqlc.User `json:"users,omitempty"`
 		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
 		SearchResult3          *SearchResult3           `json:"searchResult3,omitempty"`
 		Album                  *GetAlbumAlbum           `json:"album,omitempty"`

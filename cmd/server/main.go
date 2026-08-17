@@ -73,6 +73,7 @@ func Run() error {
 
 		// User management
 		router.Get("/getUser.view", server.HandleGetUser)
+		router.Get("/getUsers.view", server.HandleGetUsers)
 
 		// Clarification
 		router.Get("/search3.view", server.HandleSearch3)
