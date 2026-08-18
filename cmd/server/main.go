@@ -17,6 +17,7 @@ import (
 	"github.com/Simon-Weij/allium/internal/handlers"
 	"github.com/Simon-Weij/allium/internal/metadata"
 	"github.com/Simon-Weij/allium/internal/middleware"
+	"github.com/Simon-Weij/allium/internal/users"
 )
 
 const (
@@ -59,7 +60,7 @@ func Run() error {
 
 	queries := sqlc.New(db)
 
-	server := handlers.NewServer(*cfg, queries, metadata.NewMetadata(*cfg))
+	server := handlers.NewServer(*cfg, queries, metadata.NewMetadata(*cfg), users.NewUserClient(queries))
 
 	router := chi.NewRouter()
 	router.Use(middleware.WithLogging)

@@ -7,17 +7,29 @@ import (
 	"github.com/Simon-Weij/allium/generated/sqlc"
 )
 
+type UserClient struct {
+	Queries *sqlc.Queries
+}
 
-func GetUserByUsername(ctx context.Context, username string, queries *sqlc.Queries) (*sqlc.User, error) {
-	user, err := queries.GetUser(ctx, username)
+func NewUserClient(q *sqlc.Queries) *UserClient {
+	return &UserClient{
+		Queries: q,
+	}
+}
+
+// Similarly to iTunes, make a struct that satisfies the UserManagementClient Interface, use that for the mocks instead
+// Then Figure out how we're going to deal with the folder array (json_array() sql, to text in query)
+
+func (u *UserClient) GetUserByUsername(ctx context.Context, username string) (*sqlc.User, error) {
+	user, err := u.Queries.GetUser(ctx, username)
 	if err != nil {
 		return &sqlc.User{}, fmt.Errorf("error recieved when trying to query user from Database: %w", err)
 	}
 	return &user, nil
 }
 
-func GetUsers(ctx context.Context, queries *sqlc.Queries) (*[]sqlc.User, error) {
-	users, err := queries.GetUsers(ctx)
+func (u *UserClient) GetUsers(ctx context.Context) (*[]sqlc.User, error) {
+	users, err := u.Queries.GetUsers(ctx)
 	if err != nil {
 		return &[]sqlc.User{}, fmt.Errorf("error recieved when trying to get all users from: %w", err)
 	}

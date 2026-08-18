@@ -127,7 +127,7 @@ func TestHandleGetAlbum(t *testing.T) {
 			mockClient := mocks.NewMockiTunesClient(ctrl)
 			tt.setupMock(mockClient)
 
-			server := NewServer(cfg, nil, mockClient)
+			server := NewServer(cfg, nil, mockClient, nil)
 
 			req := httptest.NewRequest(http.MethodGet, "/rest/getAlbum"+tt.query, nil)
 			rec := httptest.NewRecorder()
@@ -253,7 +253,7 @@ func TestHandleGetArtist(t *testing.T) {
 			mockClient := mocks.NewMockiTunesClient(ctrl)
 			tt.setupMock(mockClient)
 
-			server := NewServer(cfg, nil, mockClient)
+			server := NewServer(cfg, nil, mockClient, nil)
 
 			req := httptest.NewRequest(http.MethodGet, "/rest/getArtist"+tt.query, nil)
 			rec := httptest.NewRecorder()

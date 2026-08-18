@@ -7,7 +7,6 @@ import (
 	"net/http"
 	
 	"github.com/Simon-Weij/allium/internal/subsonic"
-	"github.com/Simon-Weij/allium/internal/users"
 
 	_ "modernc.org/sqlite"
 )
@@ -18,10 +17,11 @@ func (s Server) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 	username := reqvalues.Get("username")
 
 	if username == "" {
-		http.Error(w, "username parameter missing", subsonic.ErrParameterMissing)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrParameterMissing, "username parameter missing")
+		slog.Error("user did not pass value for username parameter")
 	}
 
-	user, err := users.GetUserByUsername(ctx, username, s.queries) 
+	user, err := s.Userclient.GetUserByUsername(ctx, username) 
 	if errors.Is(err, sql.ErrNoRows) {
 		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrRequestedDataNotFound, "user was not found in database")
 		slog.Error("user was not found in database", "username", username, "err: ", err)
@@ -40,7 +40,7 @@ func (s Server) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 func (s Server) HandleGetUsers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	users, err := users.GetUsers(ctx, s.queries)
+	users, err := s.Userclient.GetUsers(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
 		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrRequestedDataNotFound, "user database is empty")
 		slog.Error("user was not found in database", "err: ", err)
