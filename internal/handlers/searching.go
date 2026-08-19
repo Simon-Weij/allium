@@ -11,7 +11,7 @@ import (
 	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
-type Queries struct {
+type SearchQueries struct {
 	ArtistCount int
 	SongCount   int
 	AlbumCount  int
@@ -60,7 +60,7 @@ func trimToLimit[T any](items []T, count int) []T {
 	return items
 }
 
-func parseQueries(w http.ResponseWriter, r *http.Request, client iTunesClient) *Queries {
+func parseQueries(w http.ResponseWriter, r *http.Request, client iTunesClient) *SearchQueries {
 	query := r.URL.Query()
 
 	searchQuery := query.Get("query")
@@ -71,7 +71,7 @@ func parseQueries(w http.ResponseWriter, r *http.Request, client iTunesClient) *
 	}
 
 	var (
-		queries Queries
+		queries SearchQueries
 		err     error
 	)
 

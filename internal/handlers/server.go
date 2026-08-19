@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"github.com/Simon-Weij/allium/generated/sqlc"
 	"github.com/Simon-Weij/allium/internal/config"
 	"github.com/Simon-Weij/allium/internal/metadata"
 )
@@ -9,13 +8,13 @@ import (
 type Server struct {
 	cfg          config.Config
 	metadata     *metadata.Metadata
-	queries      *sqlc.Queries
+	queries      Queries
 	iTunesclient iTunesClient
 }
 
 func NewServer(
 	cfg config.Config,
-	queries *sqlc.Queries,
+	queries Queries,
 	iTunesClient iTunesClient,
 ) *Server {
 	return &Server{

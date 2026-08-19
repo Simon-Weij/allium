@@ -22,7 +22,7 @@ func (s Server) HandleScrobble(w http.ResponseWriter, r *http.Request) {
 
 	username := queries.Get("u")
 
-	itunesSongs, err := s.metadata.GetSongById(id)
+	itunesSongs, err := s.iTunesclient.GetSongById(id)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 
