@@ -1,0 +1,9 @@
+:8080 {
+    handle /rest* {
+        reverse_proxy app:8000
+    }
+
+    handle {
+        reverse_proxy feishin:9180
+    }
+}

@@ -2,8 +2,6 @@ services:
   app:
     build: .
     pull_policy: build
-    ports:
-      - "8080:8080"
     environment:
       ALLIUM_USERNAME: ${ALLIUM_USERNAME:-alice}
       ALLIUM_PASSWORD: ${ALLIUM_PASSWORD:-changeme}
@@ -13,5 +11,25 @@ services:
       watch:
         - action: rebuild
           path: .
+  feishin:
+    image: ghcr.io/jeffvli/feishin:1.15.1
+    environment:
+      - SERVER_NAME=allium
+      - SERVER_LOCK=true
+      - SERVER_TYPE=subsonic
+      - SERVER_URL=http://localhost:8080
+      - LEGACY_AUTHENTICATION=false
+      - ANALYTICS_DISABLED=true
+  caddy:
+    image: caddy:2.11.4-alpine
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./conf:/etc/caddy
+      - ./site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
 volumes:
   data:
+  caddy_data:
+  caddy_config:

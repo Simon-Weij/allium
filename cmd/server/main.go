@@ -91,7 +91,7 @@ func Run() error {
 	slog.Info("starting app...")
 
 	srv := &http.Server{
-		Addr:         ":8080",
+		Addr:         ":8000",
 		Handler:      router,
 		ReadTimeout:  readTimeout,
 		WriteTimeout: writeTimeout,
