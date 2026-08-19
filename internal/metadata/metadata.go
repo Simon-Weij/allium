@@ -8,7 +8,7 @@ import (
 type Metadata struct {
 	client     *resty.Client
 	cfg        config.Config
-	downloader downloader
+	downloader Downloader
 }
 
 func NewMetadata(cfg config.Config) *Metadata {

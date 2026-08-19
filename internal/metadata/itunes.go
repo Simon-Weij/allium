@@ -31,10 +31,6 @@ type (
 		TrackTimeMillis  int    `json:"trackTimeMillis"`
 		PrimaryGenreName string `json:"primaryGenreName"`
 	}
-
-	downloader interface {
-		downloadAlbumCover(artworkURL, target string) error
-	}
 )
 
 const (
@@ -93,8 +89,8 @@ func (m Metadata) GetAlbumCover(id string) (string, error) {
 	coverPath := filepath.Join(coverDir, "cover.jpg")
 
 	if _, err := os.Stat(coverPath); errors.Is(err, os.ErrNotExist) {
-		if err := m.downloader.downloadAlbumCover(id, coverPath); err != nil {
-			return "", err
+		if err := m.downloader.DownloadAlbumCover(id, coverPath); err != nil {
+			return "", fmt.Errorf("could not download album cover: %w", err)
 		}
 	}
 
@@ -146,7 +142,7 @@ func (m Metadata) GetAlbumMetadata(albumId string) (*ITunesResponse, error) {
 	return &res, nil
 }
 
-func (m Metadata) downloadAlbumCover(artworkURL, target string) error {
+func (m Metadata) DownloadAlbumCover(artworkURL, target string) error {
 	coverURL, err := coverArtURL(artworkURL)
 	if err != nil {
 		return err
