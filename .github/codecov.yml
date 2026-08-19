@@ -1,3 +1,5 @@
 ignore:
   - "cmd/**/*"
   - "generated/**/*"
+  - "internal/database"
+  - "internal/config"

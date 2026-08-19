@@ -14,7 +14,7 @@ func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
 	id := query.Get("id")
 	// TODO: support size
 
-	coverPath, err := s.metadata.GetAlbumCover(id)
+	coverPath, err := s.iTunesclient.GetAlbumCover(id)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 
@@ -39,10 +39,18 @@ func (s Server) HandleStream(w http.ResponseWriter, r *http.Request) {
 
 	id := query.Get("id")
 	if id == "" {
-		http.Error(w, "id is required", subsonic.ErrParameterMissing)
+		subsonic.WriteError(
+			w,
+			http.StatusBadRequest,
+			s.cfg,
+			subsonic.ErrParameterMissing,
+			"id is required",
+		)
+
+		return
 	}
 
-	res, err := s.metadata.GetSongById(id)
+	res, err := s.iTunesclient.GetSongById(id)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		slog.Error("couldn't get song by id", "error", err)
@@ -50,9 +58,16 @@ func (s Server) HandleStream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(res.Results) == 0 {
+		slog.Info("no results found", "id", id)
+		http.Error(w, "couldn't find song with id: "+id, http.StatusNotFound)
+
+		return
+	}
+
 	song := res.Results[0]
 
-	path, err := s.metadata.DownloadOrGetSong(ctx, song.ArtistName, song.TrackName)
+	path, err := s.songDownloader.DownloadOrGetSong(ctx, song.ArtistName, song.TrackName)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		slog.Error("couldn't download song", "error", err)

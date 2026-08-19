@@ -6,10 +6,10 @@ import (
 )
 
 type Server struct {
-	cfg          config.Config
-	metadata     *metadata.Metadata
-	queries      Queries
-	iTunesclient iTunesClient
+	cfg            config.Config
+	queries        Queries
+	iTunesclient   iTunesClient
+	songDownloader SongDownloader
 }
 
 func NewServer(
@@ -17,10 +17,12 @@ func NewServer(
 	queries Queries,
 	iTunesClient iTunesClient,
 ) *Server {
+	metadata := metadata.NewMetadata(cfg)
+
 	return &Server{
-		cfg:          cfg,
-		metadata:     metadata.NewMetadata(cfg),
-		queries:      queries,
-		iTunesclient: iTunesClient,
+		cfg:            cfg,
+		queries:        queries,
+		iTunesclient:   iTunesClient,
+		songDownloader: metadata,
 	}
 }
