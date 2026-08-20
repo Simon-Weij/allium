@@ -19,16 +19,19 @@ func (s Server) HandleGetUser(w http.ResponseWriter, r *http.Request) {
 	if username == "" {
 		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrParameterMissing, "username parameter missing")
 		slog.Error("user did not pass value for username parameter")
+		return
 	}
 
 	user, err := s.Userclient.GetUserByUsername(ctx, username) 
 	if errors.Is(err, sql.ErrNoRows) {
 		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrRequestedDataNotFound, "user was not found in database")
 		slog.Error("user was not found in database", "username", username, "err: ", err)
+		return
 	}
 	if err != nil {
 		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "generic error when trying to HandleGetUser")
-		slog.Error("error recieved when trying to GetUserByUsername", "username", username, "err: ", err)
+		slog.Error("error recieved when trying to HandleGetUser", "username", username, "err: ", err)
+		return
 	}
 
 	res := subsonic.NewEmptyResponse(s.cfg)
@@ -44,10 +47,12 @@ func (s Server) HandleGetUsers(w http.ResponseWriter, r *http.Request) {
 	if errors.Is(err, sql.ErrNoRows) {
 		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrRequestedDataNotFound, "user database is empty")
 		slog.Error("user was not found in database", "err: ", err)
+		return
 	}
 	if err != nil {
 		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "generic error when trying to HandleGetUsers")
-		slog.Error("error recieved when trying to GetUserByUsername", "err: ", err)
+		slog.Error("error recieved when trying to HandleGetUsers", "err: ", err)
+		return
 	}
 
 	res := subsonic.NewEmptyResponse(s.cfg)

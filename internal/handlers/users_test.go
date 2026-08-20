@@ -63,17 +63,10 @@ func TestHandleGetUser(t *testing.T) {
 			name:              "empty username param (shouldn't work and should throw an error)",
 			query:             "?username=",
 			expectedCode:      http.StatusInternalServerError,
-			setupMock: func(m *mocks.MockUserManagementClient) {
-				m.EXPECT().
-					GetUserByUsername(context.Background(), "").
-					Return(
-						&sqlc.User{},
-						errors.New("oopsie something is wrong :("),
-					)
-			},
+			setupMock: func(m *mocks.MockUserManagementClient) {},
 		},
 		{
-			name:              "username not found in database (shouldn't work)",
+			name:              "username not found in database (shouldn't work and should throw an error)",
 			query:             "?username=someoneFake",
 			expectedCode:      http.StatusInternalServerError,
 			setupMock: func(m *mocks.MockUserManagementClient) {
@@ -159,7 +152,7 @@ func TestHandleGetUsers(t *testing.T) {
 			},
 		},
 		{
-			name:              "users db empty",
+			name:              "users table empty (shouldn't work and should throw an error)",
 			query:             "",
 			expectedCode:      http.StatusInternalServerError,
 			setupMock: func(m *mocks.MockUserManagementClient) {
@@ -167,7 +160,7 @@ func TestHandleGetUsers(t *testing.T) {
 					GetUsers(context.Background()).
 					Return(
 						&[]sqlc.User{},
-						errors.New("users db empty :("),
+						errors.New("users table empty :("),
 					)
 			},
 		},
@@ -227,25 +220,25 @@ func TestHandleCreateUser(t *testing.T) {
 			},
 		},
 		{
-			name:              "empty query (bad)",
+			name:              "empty query (shouldn't work and should throw an error)",
 			query:             "",
 			expectedCode:      http.StatusBadRequest,
 			setupMock: func(m *mocks.MockUserManagementClient) {},
 		},
 		{
-			name:              "no username",
+			name:              "no username (shouldn't work and should throw an error)",
 			query:             "?password=verysecure&email=gopher@example.com",
 			expectedCode:      http.StatusBadRequest,
 			setupMock: func(m *mocks.MockUserManagementClient) {},
 		},
 		{
-			name:              "no password",
+			name:              "no password (shouldn't work and should throw an error)",
 			query:             "?username=gopher&email=gopher@example.com",
 			expectedCode:      http.StatusBadRequest,
 			setupMock: func(m *mocks.MockUserManagementClient) {},
 		},
 		{
-			name:              "no email",
+			name:              "no email (shouldn't work and should throw an error)",
 			query:             "?username=gopher&password=verysecure",
 			expectedCode:      http.StatusBadRequest,
 			setupMock: func(m *mocks.MockUserManagementClient) {},
