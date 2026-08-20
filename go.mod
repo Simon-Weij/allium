@@ -4,6 +4,7 @@ go 1.26.5
 
 require (
 	github.com/go-chi/chi/v5 v5.3.1
+	github.com/gorilla/schema v1.4.1
 	github.com/lrstanley/go-ytdlp v1.3.5
 	github.com/pressly/goose/v3 v3.27.3
 	github.com/stretchr/testify v1.11.1

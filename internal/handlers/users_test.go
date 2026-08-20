@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
 	"github.com/Simon-Weij/allium/generated/mocks"
@@ -192,6 +194,89 @@ func TestHandleGetUsers(t *testing.T) {
 			var res subsonic.SubsonicResponseWrapper
 
 			err := json.NewDecoder(rec.Body).Decode(&res)
+			require.NoError(t, err)
+
+		})
+	}
+}
+
+
+func TestHandleCreateUser(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name              string
+		query             string
+		expectedCode      int
+		setupMock         func(m *mocks.MockUserManagementClient)
+	}{
+		{
+			name:              "should run correctly",
+			query:             "?username=gopher&password=verysecure&email=gopher@example.com",
+			expectedCode:      http.StatusOK,
+			setupMock: func(m *mocks.MockUserManagementClient) {
+				m.EXPECT().
+					CreateUser(context.Background(), url.Values{
+						"username": {"gopher"},
+						"password": {"verysecure"},
+						"email": {"gopher@example.com"},
+					}).
+					Return(
+						nil,
+					)
+			},
+		},
+		{
+			name:              "empty query (bad)",
+			query:             "",
+			expectedCode:      http.StatusBadRequest,
+			setupMock: func(m *mocks.MockUserManagementClient) {},
+		},
+		{
+			name:              "no username",
+			query:             "?password=verysecure&email=gopher@example.com",
+			expectedCode:      http.StatusBadRequest,
+			setupMock: func(m *mocks.MockUserManagementClient) {},
+		},
+		{
+			name:              "no password",
+			query:             "?username=gopher&email=gopher@example.com",
+			expectedCode:      http.StatusBadRequest,
+			setupMock: func(m *mocks.MockUserManagementClient) {},
+		},
+		{
+			name:              "no email",
+			query:             "?username=gopher&password=verysecure",
+			expectedCode:      http.StatusBadRequest,
+			setupMock: func(m *mocks.MockUserManagementClient) {},
+		},
+	}
+	
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			cfg := testutil.SetupTestingConfig(t)
+
+			ctrl := gomock.NewController(t)
+			mockClient := mocks.NewMockUserManagementClient(ctrl)
+			tt.setupMock(mockClient)
+
+			server := NewServer(cfg, nil, nil, mockClient)
+			
+			req := httptest.NewRequest(http.MethodGet, "/rest/createUser.view"+tt.query, nil)
+			rec := httptest.NewRecorder()
+
+			server.HandleCreateUser(rec, req)
+
+			assert.Equal(t, tt.expectedCode, rec.Code)
+
+			var res subsonic.SubsonicResponseWrapper
+
+			err := json.NewDecoder(rec.Body).Decode(&res)
+			if err == io.EOF {
+				return
+			}
 			require.NoError(t, err)
 
 		})

@@ -2,6 +2,8 @@ package users
 
 import (
 	"context"
+	"net/url"
+
 	"github.com/Simon-Weij/allium/generated/sqlc"
 )
 
@@ -9,4 +11,5 @@ import (
 type UserManagementClient interface {
 	GetUserByUsername(ctx context.Context, username string) (*sqlc.User, error)
 	GetUsers(ctx context.Context) (*[]sqlc.User, error)
+	CreateUser(ctx context.Context, reqValues url.Values) (error)
 }

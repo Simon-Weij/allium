@@ -3,9 +3,13 @@ package users
 import (
 	"context"
 	"fmt"
+	"net/url"
 
 	"github.com/Simon-Weij/allium/generated/sqlc"
+	"github.com/gorilla/schema"
 )
+
+var decoder = schema.NewDecoder()
 
 type UserClient struct {
 	Queries *sqlc.Queries
@@ -34,4 +38,18 @@ func (u *UserClient) GetUsers(ctx context.Context) (*[]sqlc.User, error) {
 		return &[]sqlc.User{}, fmt.Errorf("error recieved when trying to get all users from: %w", err)
 	}
 	return &users, nil
+}
+
+func (u *UserClient) CreateUser(ctx context.Context, reqValues url.Values) (error) {
+
+	var params sqlc.CreateUserParams
+	err := decoder.Decode(&params, reqValues)
+	if err != nil {
+		return fmt.Errorf("error returned while trying to createUser %w", err)
+	}
+	err = u.Queries.CreateUser(ctx, params) 
+	if err != nil {
+		return fmt.Errorf("error returned while trying to createUser %w", err)
+	}
+	return nil
 }
