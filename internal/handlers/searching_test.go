@@ -238,7 +238,7 @@ func TestHandleSearch3(t *testing.T) {
 			mockClient := mocks.NewMockiTunesClient(ctrl)
 			tt.setupMock(mockClient)
 
-			server := NewServer(cfg, nil, mockClient)
+			server := NewServer(cfg, nil, mockClient, nil)
 
 			req := httptest.NewRequest(http.MethodGet, "/rest/search3.view"+tt.query, nil)
 			rec := httptest.NewRecorder()

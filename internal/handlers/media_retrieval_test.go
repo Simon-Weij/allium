@@ -73,7 +73,7 @@ func TestHandleGetCoverArt(t *testing.T) {
 			mockClient := mocks.NewMockiTunesClient(ctrl)
 			tt.setupMock(mockClient)
 
-			server := NewServer(cfg, nil, mockClient)
+			server := NewServer(cfg, nil, mockClient, nil)
 
 			req := httptest.NewRequest(http.MethodGet, "/rest/getCoverArt"+tt.query, nil)
 			rec := httptest.NewRecorder()
@@ -184,8 +184,7 @@ func TestHandleStream(t *testing.T) {
 			mockDownloader := mocks.NewMockSongDownloader(ctrl)
 			tt.setupMocks(mockClient, mockDownloader)
 
-			server := NewServer(cfg, nil, mockClient)
-			server.songDownloader = mockDownloader
+			server := NewServer(cfg, nil, mockClient, mockDownloader)
 
 			req := httptest.NewRequest(http.MethodGet, "/rest/stream.view"+tt.query, nil)
 			rec := httptest.NewRecorder()

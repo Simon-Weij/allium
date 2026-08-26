@@ -14,7 +14,7 @@ func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
 	id := query.Get("id")
 	// TODO: support size
 
-	coverPath, err := s.iTunesclient.GetAlbumCover(id)
+	coverPath, err := s.iTunesClient.GetAlbumCover(id)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 
@@ -50,7 +50,7 @@ func (s Server) HandleStream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.iTunesclient.GetSongById(id)
+	res, err := s.iTunesClient.GetSongById(id)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		slog.Error("couldn't get song by id", "error", err)

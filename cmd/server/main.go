@@ -23,6 +23,7 @@ const (
 	readTimeout                    = 45 * time.Second
 	writeTimeout                   = 30 * time.Second
 	idleTimeout                    = 120 * time.Second
+	readHeaderTimeout              = 5 * time.Second
 	contextTimeout                 = 5 * time.Second
 	dataDirPermissions os.FileMode = 0o750
 )
@@ -59,7 +60,8 @@ func Run() error {
 
 	queries := sqlc.New(db)
 
-	server := handlers.NewServer(*cfg, queries, metadata.NewMetadata(*cfg))
+	m := metadata.NewMetadata(*cfg)
+	server := handlers.NewServer(*cfg, queries, m, m)
 
 	router := chi.NewRouter()
 	router.Use(middleware.WithLogging)
@@ -86,16 +88,33 @@ func Run() error {
 
 		// Media annotation
 		router.Get("/scrobble.view", server.HandleScrobble)
+
+		// Playlists
+		router.Get("/createPlaylist.view", server.HandleCreatePlaylist)
+		router.Get("/updatePlaylist.view", server.HandleUpdatePlaylist)
+		router.Get("/getPlaylists.view", server.HandleGetPlaylists)
+		router.Get("/getPlaylist.view", server.HandleGetPlaylist)
 	})
 
 	slog.Info("starting app...")
 
 	srv := &http.Server{
-		Addr:         ":8000",
-		Handler:      router,
-		ReadTimeout:  readTimeout,
-		WriteTimeout: writeTimeout,
-		IdleTimeout:  idleTimeout,
+		Addr:                         ":8000",
+		Handler:                      router,
+		DisableGeneralOptionsHandler: false,
+		TLSConfig:                    nil,
+		ReadTimeout:                  readTimeout,
+		ReadHeaderTimeout:            readHeaderTimeout,
+		WriteTimeout:                 writeTimeout,
+		IdleTimeout:                  idleTimeout,
+		MaxHeaderBytes:               0,
+		TLSNextProto:                 nil,
+		ConnState:                    nil,
+		ErrorLog:                     nil,
+		BaseContext:                  nil,
+		ConnContext:                  nil,
+		HTTP2:                        nil,
+		Protocols:                    nil,
 	}
 
 	if err := srv.ListenAndServe(); err != nil {

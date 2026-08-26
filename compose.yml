@@ -26,7 +26,6 @@ services:
       - "8080:8080"
     volumes:
       - ./conf:/etc/caddy
-      - ./site:/srv
       - caddy_data:/data
       - caddy_config:/config
 volumes:

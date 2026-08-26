@@ -17,6 +17,7 @@
           goose
           sqlc
           mockgen
+          gotestsum
         ];
       };
     });

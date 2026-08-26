@@ -39,10 +39,19 @@ func TestHandleScrobble(t *testing.T) {
 					UpdatePlays(
 						gomock.Any(),
 						sqlc.UpdatePlaysParams{
-							ID:     777888999,
-							Title:  "Test Song",
-							Artist: "Alice",
-							User:   "alice",
+							ID:         777888999,
+							Title:      "Test Song",
+							Artist:     "Alice",
+							Album:      "Test album",
+							AlbumID:    444555666,
+							ArtistID:   111222333,
+							Duration:   215,
+							Track:      3,
+							Year:       2024,
+							Genre:      "Pop",
+							DiscNumber: 1,
+							User:       "alice",
+							ArtworkUrl: "https://example.com/artwork/100x100.jpg",
 						},
 					).
 					Return(nil)
@@ -93,7 +102,7 @@ func TestHandleScrobble(t *testing.T) {
 			mockQueries := mocks.NewMockQueries(ctrl)
 			tt.setupMocks(mockClient, mockQueries)
 
-			server := NewServer(cfg, mockQueries, mockClient)
+			server := NewServer(cfg, mockQueries, mockClient, nil)
 
 			req := httptest.NewRequest(http.MethodGet, "/rest/scrobble.view"+tt.query, nil)
 			rec := httptest.NewRecorder()

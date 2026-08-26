@@ -1,7 +1,8 @@
 dev:
     docker compose up
 test:
-    go test ./...
+    just generate
+    gotestsum --format testname
 lint: 
     golangci-lint run
 format:

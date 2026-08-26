@@ -34,7 +34,7 @@ const (
 	testEmail = "irrelevant@example.com"
 )
 
-func ConvertItunesAlbum(response *metadata.ITunesResponse) subsonic.GetAlbumAlbum {
+func convertItunesAlbum(response *metadata.ITunesResponse) subsonic.GetAlbumAlbum {
 	songs := make([]subsonic.Song, 0, len(response.Results))
 
 	duration := 0
@@ -47,6 +47,27 @@ func ConvertItunesAlbum(response *metadata.ITunesResponse) subsonic.GetAlbumAlbu
 		song := convertItunesSong(result)
 		songs = append(songs, song)
 		duration += song.Duration
+	}
+
+	if len(songs) == 0 {
+		return subsonic.GetAlbumAlbum{
+			Id:        "",
+			Parent:    "",
+			Album:     "",
+			Title:     "",
+			Name:      "",
+			IsDir:     false,
+			CoverArt:  "",
+			SongCount: 0,
+			Created:   "",
+			Duration:  0,
+			PlayCount: 0,
+			ArtistId:  "",
+			Artist:    "",
+			Year:      0,
+			Genre:     "",
+			Song:      nil,
+		}
 	}
 
 	song := songs[0]
@@ -71,7 +92,7 @@ func ConvertItunesAlbum(response *metadata.ITunesResponse) subsonic.GetAlbumAlbu
 	}
 }
 
-func ConvertItunesArtist(response *metadata.ITunesResponse) subsonic.GetArtistArtist {
+func convertItunesArtist(response *metadata.ITunesResponse) subsonic.GetArtistArtist {
 	var (
 		artist subsonic.GetArtistArtist
 		albums = []subsonic.GetArtistAlbum{}

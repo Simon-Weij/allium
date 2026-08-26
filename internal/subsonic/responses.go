@@ -25,6 +25,8 @@ type (
 		SearchResult3          *SearchResult3           `json:"searchResult3,omitempty"`
 		Album                  *GetAlbumAlbum           `json:"album,omitempty"`
 		Artist                 *GetArtistArtist         `json:"artist,omitempty"`
+		Playlist               *Playlist                `json:"playlist,omitempty"`
+		Playlists              *Playlists               `json:"playlists,omitempty"`
 		Error                  *Error                   `json:"error,omitempty"`
 	}
 
@@ -59,6 +61,22 @@ type (
 		StreamRole        bool   `json:"streamRole"`
 		JukeboxRole       bool   `json:"jukeboxRole"`
 		ShareRole         bool   `json:"shareRole"`
+	}
+
+	Playlist struct {
+		Id        string `json:"id"`
+		Name      string `json:"name"`
+		Owner     string `json:"owner"`
+		Public    bool   `json:"public"`
+		Created   string `json:"created"`
+		Changed   string `json:"changed"`
+		SongCount int    `json:"songCount"`
+		Duration  int    `json:"duration"`
+		Entry     []Song `json:"entry,omitempty"`
+	}
+
+	Playlists struct {
+		Playlist []Playlist `json:"playlist"`
 	}
 
 	Song struct {
@@ -196,6 +214,8 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			SearchResult3:          nil,
 			Album:                  nil,
 			Artist:                 nil,
+			Playlist:               nil,
+			Playlists:              nil,
 
 			Error: nil,
 		},
@@ -205,5 +225,8 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 func WriteJSON(w http.ResponseWriter, status int, body any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(body)
+
+	if err := json.NewEncoder(w).Encode(body); err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+	}
 }

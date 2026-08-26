@@ -28,7 +28,7 @@ type ResultTypes struct {
 const defaultSearchLimit = 20
 
 func (s Server) HandleSearch3(w http.ResponseWriter, r *http.Request) {
-	queries := parseQueries(w, r, s.iTunesclient)
+	queries := parseQueries(w, r, s.iTunesClient)
 	if queries == nil {
 		return
 	}

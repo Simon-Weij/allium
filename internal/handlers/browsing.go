@@ -15,7 +15,7 @@ func (s Server) HandleGetAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.iTunesclient.GetAlbumMetadata(id)
+	res, err := s.iTunesClient.GetAlbumMetadata(id)
 	if err != nil {
 		slog.Error("something went wrong trying to fetch metadata", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -30,7 +30,14 @@ func (s Server) HandleGetAlbum(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	album := ConvertItunesAlbum(res)
+	album := convertItunesAlbum(res)
+
+	if album.SongCount == 0 {
+		slog.Info("no songs found for album", "id", id)
+		http.Error(w, "couldn't find album with id: "+id, http.StatusNotFound)
+
+		return
+	}
 
 	response := subsonic.NewEmptyResponse(s.cfg)
 	response.SubsonicResponse.Album = &album
@@ -46,7 +53,7 @@ func (s Server) HandleGetArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.iTunesclient.GetArtistById(id)
+	res, err := s.iTunesClient.GetArtistById(id)
 	if err != nil {
 		slog.Error("something went wrong trying to fetch metadata", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -54,7 +61,7 @@ func (s Server) HandleGetArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	artist := ConvertItunesArtist(res)
+	artist := convertItunesArtist(res)
 
 	response := subsonic.NewEmptyResponse(s.cfg)
 	response.SubsonicResponse.Artist = &artist
