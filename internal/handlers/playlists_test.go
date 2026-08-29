@@ -11,7 +11,7 @@ import (
 
 	"github.com/Simon-Weij/allium/generated/mocks"
 	"github.com/Simon-Weij/allium/generated/sqlc"
-	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/resolver"
 	"github.com/Simon-Weij/allium/internal/subsonic"
 	"github.com/Simon-Weij/allium/internal/testutil"
 	"github.com/stretchr/testify/assert"
@@ -29,9 +29,9 @@ func expectAddSongsToPlaylist(
 	for idx, sid := range songIDs {
 		i.EXPECT().
 			GetSongById(sid).
-			Return(&metadata.ITunesResponse{
+			Return(&resolver.ITunesResponse{
 				ResultCount: 1,
-				Results:     []metadata.ITunesResult{mockResult},
+				Results:     []resolver.ITunesResult{mockResult},
 			}, nil)
 		idInt, _ := strconv.Atoi(sid)
 		m.EXPECT().
@@ -222,9 +222,9 @@ func TestHandleCreatePlaylist(t *testing.T) {
 					Playcount: 0,
 					User:      "",
 				}, nil)
-				i.EXPECT().GetSongById("123").Return(&metadata.ITunesResponse{
+				i.EXPECT().GetSongById("123").Return(&resolver.ITunesResponse{
 					ResultCount: 1,
-					Results:     []metadata.ITunesResult{mockResult},
+					Results:     []resolver.ITunesResult{mockResult},
 				}, nil)
 				m.EXPECT().UpdatePlays(gomock.Any(), gomock.Any()).Return(nil)
 				m.EXPECT().GetMaxPlaylistPosition(gomock.Any(), "1").Return(int64(0), errors.New("db error"))
@@ -246,9 +246,9 @@ func TestHandleCreatePlaylist(t *testing.T) {
 					Playcount: 0,
 					User:      "",
 				}, nil)
-				i.EXPECT().GetSongById("123").Return(&metadata.ITunesResponse{
+				i.EXPECT().GetSongById("123").Return(&resolver.ITunesResponse{
 					ResultCount: 1,
-					Results:     []metadata.ITunesResult{mockResult},
+					Results:     []resolver.ITunesResult{mockResult},
 				}, nil)
 				m.EXPECT().UpdatePlays(gomock.Any(), gomock.Any()).Return(nil)
 				m.EXPECT().GetMaxPlaylistPosition(gomock.Any(), "1").Return(int64(-1), nil)
@@ -275,9 +275,9 @@ func TestHandleCreatePlaylist(t *testing.T) {
 					Playcount: 0,
 					User:      "",
 				}, nil)
-				i.EXPECT().GetSongById("123").Return(&metadata.ITunesResponse{
+				i.EXPECT().GetSongById("123").Return(&resolver.ITunesResponse{
 					ResultCount: 0,
-					Results:     []metadata.ITunesResult{},
+					Results:     []resolver.ITunesResult{},
 				}, nil)
 			},
 		},
@@ -297,9 +297,9 @@ func TestHandleCreatePlaylist(t *testing.T) {
 					Playcount: 0,
 					User:      "",
 				}, nil)
-				i.EXPECT().GetSongById("123").Return(&metadata.ITunesResponse{
+				i.EXPECT().GetSongById("123").Return(&resolver.ITunesResponse{
 					ResultCount: 1,
-					Results:     []metadata.ITunesResult{mockResult},
+					Results:     []resolver.ITunesResult{mockResult},
 				}, nil)
 				m.EXPECT().UpdatePlays(gomock.Any(), gomock.Any()).Return(errors.New("db error"))
 			},
@@ -758,7 +758,7 @@ func TestHandleUpdatePlaylist(t *testing.T) {
 			},
 		},
 		{
-			name:         "errors when updating playlist metadata fails",
+			name:         "errors when updating playlist resolver fails",
 			query:        "?playlistId=123&name=new+name",
 			expectedCode: http.StatusInternalServerError,
 			setup: func(m *mocks.MockQueries, i *mocks.MockiTunesClient) {

@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/Simon-Weij/allium/generated/mocks"
-	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/resolver"
 	"github.com/Simon-Weij/allium/internal/subsonic"
 	"github.com/Simon-Weij/allium/internal/testutil"
 	"github.com/stretchr/testify/assert"
@@ -111,9 +111,9 @@ func TestHandleStream(t *testing.T) {
 			setupMocks: func(m *mocks.MockiTunesClient, s *mocks.MockSongDownloader) {
 				m.EXPECT().
 					GetSongById("777888999").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 1,
-						Results:     []metadata.ITunesResult{mockResult},
+						Results:     []resolver.ITunesResult{mockResult},
 					}, nil)
 
 				songPath := filepath.Join(t.TempDir(), "song.mp3")
@@ -148,9 +148,9 @@ func TestHandleStream(t *testing.T) {
 			setupMocks: func(m *mocks.MockiTunesClient, s *mocks.MockSongDownloader) {
 				m.EXPECT().
 					GetSongById("777888999").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 0,
-						Results:     []metadata.ITunesResult{},
+						Results:     []resolver.ITunesResult{},
 					}, nil)
 			},
 		},
@@ -161,9 +161,9 @@ func TestHandleStream(t *testing.T) {
 			setupMocks: func(m *mocks.MockiTunesClient, s *mocks.MockSongDownloader) {
 				m.EXPECT().
 					GetSongById("777888999").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 1,
-						Results:     []metadata.ITunesResult{mockResult},
+						Results:     []resolver.ITunesResult{mockResult},
 					}, nil)
 
 				s.EXPECT().

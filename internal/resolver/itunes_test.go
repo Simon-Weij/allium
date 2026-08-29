@@ -1,11 +1,11 @@
-package metadata
+package resolver
 
 import (
 	"os"
 	"path/filepath"
 	"testing"
 
-	metadatamocks "github.com/Simon-Weij/allium/generated/mocks/metadata"
+	resolvermocks "github.com/Simon-Weij/allium/generated/mocks/resolver"
 	"github.com/Simon-Weij/allium/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -23,7 +23,7 @@ func TestGetAlbumCover(t *testing.T) {
 		metadata := NewMetadata(cfg)
 
 		ctrl := gomock.NewController(t)
-		downloader := metadatamocks.NewMockDownloader(ctrl)
+		downloader := resolvermocks.NewMockDownloader(ctrl)
 		metadata.downloader = downloader
 
 		const id = "abcdef"
@@ -46,7 +46,7 @@ func TestGetAlbumCover(t *testing.T) {
 		metadata := NewMetadata(cfg)
 
 		ctrl := gomock.NewController(t)
-		downloader := metadatamocks.NewMockDownloader(ctrl)
+		downloader := resolvermocks.NewMockDownloader(ctrl)
 		metadata.downloader = downloader
 
 		const id = "abcdef"

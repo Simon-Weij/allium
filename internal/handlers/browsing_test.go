@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/Simon-Weij/allium/generated/mocks"
-	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/resolver"
 	"github.com/Simon-Weij/allium/internal/subsonic"
 	"github.com/Simon-Weij/allium/internal/testutil"
 	"github.com/stretchr/testify/assert"
@@ -16,7 +16,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-var mockResult = metadata.ITunesResult{
+var mockResult = resolver.ITunesResult{
 	WrapperType:      "track",
 	Kind:             "song",
 	ArtistID:         111222333,
@@ -51,9 +51,9 @@ func TestHandleGetAlbum(t *testing.T) {
 			setupMock: func(m *mocks.MockiTunesClient) {
 				m.EXPECT().
 					GetAlbumMetadata("5").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 1,
-						Results: []metadata.ITunesResult{
+						Results: []resolver.ITunesResult{
 							mockResult,
 						},
 					}, nil)
@@ -68,9 +68,9 @@ func TestHandleGetAlbum(t *testing.T) {
 			setupMock: func(m *mocks.MockiTunesClient) {
 				m.EXPECT().
 					GetAlbumMetadata("5").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 3,
-						Results: []metadata.ITunesResult{
+						Results: []resolver.ITunesResult{
 							mockResult,
 							{
 								WrapperType:    "collection",
@@ -108,9 +108,9 @@ func TestHandleGetAlbum(t *testing.T) {
 			setupMock: func(m *mocks.MockiTunesClient) {
 				m.EXPECT().
 					GetAlbumMetadata("5").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 1,
-						Results:     []metadata.ITunesResult{},
+						Results:     []resolver.ITunesResult{},
 					}, nil)
 			},
 			expectedCode: http.StatusNotFound,
@@ -166,9 +166,9 @@ func TestHandleGetArtist(t *testing.T) {
 			setupMock: func(m *mocks.MockiTunesClient) {
 				m.EXPECT().
 					GetArtistById("5").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 1,
-						Results: []metadata.ITunesResult{
+						Results: []resolver.ITunesResult{
 							{
 								WrapperType:   "artist",
 								ArtistID:      111222333,
@@ -186,9 +186,9 @@ func TestHandleGetArtist(t *testing.T) {
 			setupMock: func(m *mocks.MockiTunesClient) {
 				m.EXPECT().
 					GetArtistById("5").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 4,
-						Results: []metadata.ITunesResult{
+						Results: []resolver.ITunesResult{
 							{
 								WrapperType:   "artist",
 								ArtistID:      111222333,

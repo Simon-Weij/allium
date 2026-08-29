@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/Simon-Weij/allium/generated/mocks"
-	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/resolver"
 	"github.com/Simon-Weij/allium/internal/subsonic"
 	"github.com/Simon-Weij/allium/internal/testutil"
 	"github.com/stretchr/testify/assert"
@@ -21,18 +21,18 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 
 	tests := []struct {
 		name            string
-		results         []metadata.ITunesResult
+		results         []resolver.ITunesResult
 		expectedSongs   []subsonic.Song
 		expectedAlbums  []subsonic.SearchResult3Album
 		expectedArtists []subsonic.Artist
 	}{
 		{
 			name:    "should return empty slice for no results",
-			results: []metadata.ITunesResult{},
+			results: []resolver.ITunesResult{},
 		},
 		{
 			name:    "should convert track to song",
-			results: []metadata.ITunesResult{mockResult},
+			results: []resolver.ITunesResult{mockResult},
 			expectedSongs: []subsonic.Song{
 				{
 					Id:           "777888999",
@@ -63,7 +63,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		},
 		{
 			name: "should convert collection to album",
-			results: []metadata.ITunesResult{
+			results: []resolver.ITunesResult{
 				{
 					WrapperType:    "collection",
 					ArtistID:       111222333,
@@ -95,7 +95,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		},
 		{
 			name: "should convert artist",
-			results: []metadata.ITunesResult{
+			results: []resolver.ITunesResult{
 				{
 					WrapperType:   "artist",
 					ArtistID:      111222333,
@@ -116,7 +116,7 @@ func TestConvertItunesOpenSubsonic(t *testing.T) {
 		},
 		{
 			name: "should skip unknown wrapper type",
-			results: []metadata.ITunesResult{
+			results: []resolver.ITunesResult{
 				{
 					WrapperType: "unknown",
 					ArtistID:    111222333,
@@ -160,9 +160,9 @@ func TestHandleSearch3(t *testing.T) {
 			setupMock: func(m *mocks.MockiTunesClient) {
 				m.EXPECT().
 					SearchWithItunes("song").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 1,
-						Results: []metadata.ITunesResult{
+						Results: []resolver.ITunesResult{
 							mockResult,
 						},
 					}, nil)
@@ -174,14 +174,14 @@ func TestHandleSearch3(t *testing.T) {
 			expectedCode:      http.StatusOK,
 			expectedSongCount: 20,
 			setupMock: func(m *mocks.MockiTunesClient) {
-				results := make([]metadata.ITunesResult, 30)
+				results := make([]resolver.ITunesResult, 30)
 				for i := range results {
 					results[i] = mockResult
 				}
 
 				m.EXPECT().
 					SearchWithItunes("song").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 30,
 						Results:     results,
 					}, nil)

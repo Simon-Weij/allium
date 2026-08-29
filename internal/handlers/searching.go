@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/resolver"
 	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
@@ -16,7 +16,7 @@ type SearchQueries struct {
 	SongCount   int
 	AlbumCount  int
 	SearchCount int
-	res         *metadata.ITunesResponse
+	res         *resolver.ITunesResponse
 }
 
 type ResultTypes struct {
@@ -128,7 +128,7 @@ func queryInt(query url.Values, key string) (int, error) {
 	return n, nil
 }
 
-func ConvertItunesOpenSubsonic(results []metadata.ITunesResult) ResultTypes {
+func ConvertItunesOpenSubsonic(results []resolver.ITunesResult) ResultTypes {
 	songs := []subsonic.Song{}
 	artists := []subsonic.Artist{}
 	albums := []subsonic.SearchResult3Album{}

@@ -18,6 +18,7 @@ coverage browser="chromium":
     go tool cover -html=/tmp/coverage/coverage.out -o=/tmp/coverage/coverage.html
     {{browser}} /tmp/coverage/coverage.html
 pre-commit:
+    just generate
     just test
     just lint
     just format

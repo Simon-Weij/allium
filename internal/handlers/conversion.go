@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/resolver"
 	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
@@ -34,7 +34,7 @@ const (
 	testEmail = "irrelevant@example.com"
 )
 
-func convertItunesAlbum(response *metadata.ITunesResponse) subsonic.GetAlbumAlbum {
+func convertItunesAlbum(response *resolver.ITunesResponse) subsonic.GetAlbumAlbum {
 	songs := make([]subsonic.Song, 0, len(response.Results))
 
 	duration := 0
@@ -92,7 +92,7 @@ func convertItunesAlbum(response *metadata.ITunesResponse) subsonic.GetAlbumAlbu
 	}
 }
 
-func convertItunesArtist(response *metadata.ITunesResponse) subsonic.GetArtistArtist {
+func convertItunesArtist(response *resolver.ITunesResponse) subsonic.GetArtistArtist {
 	var (
 		artist subsonic.GetArtistArtist
 		albums = []subsonic.GetArtistAlbum{}
@@ -119,7 +119,7 @@ func convertItunesArtist(response *metadata.ITunesResponse) subsonic.GetArtistAr
 	return artist
 }
 
-func convertItunesArtistAlbum(result metadata.ITunesResult) subsonic.GetArtistAlbum {
+func convertItunesArtistAlbum(result resolver.ITunesResult) subsonic.GetArtistAlbum {
 	return subsonic.GetArtistAlbum{
 		Id:            strconv.Itoa(result.CollectionID),
 		Parent:        strconv.Itoa(result.ArtistID),
@@ -142,7 +142,7 @@ func convertItunesArtistAlbum(result metadata.ITunesResult) subsonic.GetArtistAl
 	}
 }
 
-func convertItunesSong(result metadata.ITunesResult) subsonic.Song {
+func convertItunesSong(result resolver.ITunesResult) subsonic.Song {
 	return subsonic.Song{
 		Id:           strconv.Itoa(result.TrackID),
 		Parent:       strconv.Itoa(result.CollectionID),

@@ -8,7 +8,7 @@ import (
 
 	"github.com/Simon-Weij/allium/generated/mocks"
 	"github.com/Simon-Weij/allium/generated/sqlc"
-	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/resolver"
 	"github.com/Simon-Weij/allium/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -30,9 +30,9 @@ func TestHandleScrobble(t *testing.T) {
 			setupMocks: func(m *mocks.MockiTunesClient, q *mocks.MockQueries) {
 				m.EXPECT().
 					GetSongById("777888999").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 1,
-						Results:     []metadata.ITunesResult{mockResult},
+						Results:     []resolver.ITunesResult{mockResult},
 					}, nil)
 
 				q.EXPECT().
@@ -80,9 +80,9 @@ func TestHandleScrobble(t *testing.T) {
 			setupMocks: func(m *mocks.MockiTunesClient, q *mocks.MockQueries) {
 				m.EXPECT().
 					GetSongById("777888999").
-					Return(&metadata.ITunesResponse{
+					Return(&resolver.ITunesResponse{
 						ResultCount: 1,
-						Results:     []metadata.ITunesResult{mockResult},
+						Results:     []resolver.ITunesResult{mockResult},
 					}, nil)
 
 				q.EXPECT().

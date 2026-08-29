@@ -1,4 +1,4 @@
-package metadata
+package resolver
 
 import (
 	"github.com/Simon-Weij/allium/internal/config"

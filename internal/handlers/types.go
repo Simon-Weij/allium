@@ -4,15 +4,15 @@ import (
 	"context"
 
 	"github.com/Simon-Weij/allium/generated/sqlc"
-	"github.com/Simon-Weij/allium/internal/metadata"
+	"github.com/Simon-Weij/allium/internal/resolver"
 )
 
 //go:generate mockgen -source=types.go -destination=../../generated/mocks/itunes_mock.go -package=mocks -exclude_interfaces=Queries,SongDownloader
 type iTunesClient interface {
-	SearchWithItunes(query string) (*metadata.ITunesResponse, error)
-	GetAlbumMetadata(albumId string) (*metadata.ITunesResponse, error)
-	GetArtistById(artistId string) (*metadata.ITunesResponse, error)
-	GetSongById(id string) (*metadata.ITunesResponse, error)
+	SearchWithItunes(query string) (*resolver.ITunesResponse, error)
+	GetAlbumMetadata(albumId string) (*resolver.ITunesResponse, error)
+	GetArtistById(artistId string) (*resolver.ITunesResponse, error)
+	GetSongById(id string) (*resolver.ITunesResponse, error)
 	GetAlbumCover(id string) (string, error)
 }
 
