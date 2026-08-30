@@ -49,7 +49,7 @@ var (
 	errCreatingDirs      = errors.New("couldn't create directories")
 )
 
-func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
+func (r Resolver) SearchWithItunes(query string) (*ITunesResponse, error) {
 	entities := []string{"song", "album", "musicArtist"}
 
 	final := &ITunesResponse{
@@ -59,7 +59,7 @@ func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
 
 	for _, entity := range entities {
 		var res ITunesResponse
-		if _, err := m.client.R().
+		if _, err := r.client.R().
 			SetQueryParam("term", query).
 			SetQueryParam("media", "music").
 			SetQueryParam("entity", entity).
@@ -77,10 +77,10 @@ func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
 }
 
 // GetAlbumCover gets its id from the itunes url for getting album covers.
-func (m Metadata) GetAlbumCover(id string) (string, error) {
-	dataDir := filepath.Join(m.cfg.Data, "covers")
+func (r Resolver) GetAlbumCover(id string) (string, error) {
+	dataDir := filepath.Join(r.cfg.Data, "covers")
 
-	relativeDir, err := m.createDirs(dataDir, id)
+	relativeDir, err := r.createDirs(dataDir, id)
 	if err != nil {
 		return "", fmt.Errorf("could not create directories: %w", err)
 	}
@@ -89,7 +89,7 @@ func (m Metadata) GetAlbumCover(id string) (string, error) {
 	coverPath := filepath.Join(coverDir, "cover.jpg")
 
 	if _, err := os.Stat(coverPath); errors.Is(err, os.ErrNotExist) {
-		if err := m.downloader.DownloadAlbumCover(id, coverPath); err != nil {
+		if err := r.downloader.DownloadAlbumCover(id, coverPath); err != nil {
 			return "", fmt.Errorf("could not download album cover: %w", err)
 		}
 	}
@@ -97,9 +97,9 @@ func (m Metadata) GetAlbumCover(id string) (string, error) {
 	return coverPath, nil
 }
 
-func (m Metadata) GetSongById(id string) (*ITunesResponse, error) {
+func (r Resolver) GetSongById(id string) (*ITunesResponse, error) {
 	var res ITunesResponse
-	if _, err := m.client.R().
+	if _, err := r.client.R().
 		SetQueryParam("id", id).
 		SetQueryParam("media", "music").
 		SetQueryParam("entity", "song").
@@ -112,9 +112,9 @@ func (m Metadata) GetSongById(id string) (*ITunesResponse, error) {
 	return &res, nil
 }
 
-func (m Metadata) GetArtistById(id string) (*ITunesResponse, error) {
+func (r Resolver) GetArtistById(id string) (*ITunesResponse, error) {
 	var res ITunesResponse
-	if _, err := m.client.R().
+	if _, err := r.client.R().
 		SetQueryParam("id", id).
 		SetQueryParam("media", "music").
 		SetQueryParam("entity", "album").
@@ -127,9 +127,9 @@ func (m Metadata) GetArtistById(id string) (*ITunesResponse, error) {
 	return &res, nil
 }
 
-func (m Metadata) GetAlbumMetadata(albumId string) (*ITunesResponse, error) {
+func (r Resolver) GetAlbumMetadata(albumId string) (*ITunesResponse, error) {
 	var res ITunesResponse
-	if _, err := m.client.R().
+	if _, err := r.client.R().
 		SetQueryParam("id", albumId).
 		SetQueryParam("media", "music").
 		SetQueryParam("entity", "song").
@@ -142,13 +142,13 @@ func (m Metadata) GetAlbumMetadata(albumId string) (*ITunesResponse, error) {
 	return &res, nil
 }
 
-func (m Metadata) DownloadAlbumCover(artworkURL, target string) error {
+func (r Resolver) DownloadAlbumCover(artworkURL, target string) error {
 	coverURL, err := coverArtURL(artworkURL)
 	if err != nil {
 		return err
 	}
 
-	_, err = m.client.R().
+	_, err = r.client.R().
 		SetResponseSaveToFile(true).
 		SetResponseSaveFileName(target).
 		Get(coverURL)
@@ -170,7 +170,7 @@ func coverArtURL(artworkURL string) (string, error) {
 
 // Create dirs according to a string where every 2 characters create a new directory.
 // It returns the relative path of the deepest directory created.
-func (m Metadata) createDirs(baseDirs, str string) (string, error) {
+func (r Resolver) createDirs(baseDirs, str string) (string, error) {
 	var relativeDir string
 
 	for i := 0; i < len(str); i += directorySpacing {

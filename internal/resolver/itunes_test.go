@@ -20,7 +20,7 @@ func TestGetAlbumCover(t *testing.T) {
 
 		cfg := testutil.SetupTestingConfig(t)
 		cfg.Data = t.TempDir()
-		metadata := NewMetadata(cfg)
+		metadata := NewResolver(cfg)
 
 		ctrl := gomock.NewController(t)
 		downloader := resolvermocks.NewMockDownloader(ctrl)
@@ -43,7 +43,7 @@ func TestGetAlbumCover(t *testing.T) {
 
 		cfg := testutil.SetupTestingConfig(t)
 		cfg.Data = t.TempDir()
-		metadata := NewMetadata(cfg)
+		metadata := NewResolver(cfg)
 
 		ctrl := gomock.NewController(t)
 		downloader := resolvermocks.NewMockDownloader(ctrl)
@@ -73,7 +73,7 @@ func TestCreateDirs(t *testing.T) {
 		t.Parallel()
 		testDir := t.TempDir()
 		cfg := testutil.SetupTestingConfig(t)
-		metadata := NewMetadata(cfg)
+		metadata := NewResolver(cfg)
 
 		path, err := metadata.createDirs(testDir, "abcdef")
 		require.NoError(t, err)
@@ -86,7 +86,7 @@ func TestCreateDirs(t *testing.T) {
 		require.NoError(t, err)
 
 		cfg := testutil.SetupTestingConfig(t)
-		metadata := NewMetadata(cfg)
+		metadata := NewResolver(cfg)
 		_, err = metadata.createDirs(testDir, "abcdef")
 		assert.ErrorIs(t, err, errCreatingDirs)
 	})

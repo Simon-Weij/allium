@@ -13,3 +13,9 @@ ON CONFLICT(id) DO UPDATE SET
     genre = excluded.genre,
     disc_number = excluded.disc_number,
     artwork_url = excluded.artwork_url;
+
+-- name: GetAvailableGenres :many
+SELECT DISTINCT genre
+FROM history
+WHERE genre != ''
+ORDER BY genre;

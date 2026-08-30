@@ -60,7 +60,7 @@ func Run() error {
 
 	queries := sqlc.New(db)
 
-	m := resolver.NewMetadata(*cfg)
+	m := resolver.NewResolver(*cfg)
 	server := handlers.NewServer(*cfg, queries, m, m)
 
 	router := chi.NewRouter()

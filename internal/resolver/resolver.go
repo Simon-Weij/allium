@@ -5,20 +5,20 @@ import (
 	"resty.dev/v3"
 )
 
-type Metadata struct {
+type Resolver struct {
 	client     *resty.Client
 	cfg        config.Config
 	downloader Downloader
 }
 
-func NewMetadata(cfg config.Config) *Metadata {
-	metadata := &Metadata{
+func NewResolver(cfg config.Config) *Resolver {
+	resolver := &Resolver{
 		client: resty.New(),
 		cfg:    cfg,
 
 		downloader: nil,
 	}
-	metadata.downloader = metadata
+	resolver.downloader = resolver
 
-	return metadata
+	return resolver
 }

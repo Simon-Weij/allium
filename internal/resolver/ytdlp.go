@@ -15,8 +15,8 @@ const (
 	folderPermission = 0o755
 )
 
-func (m Metadata) DownloadOrGetSong(ctx context.Context, artist, title string) (string, error) {
-	outputDir := filepath.Join(m.cfg.Data, "Music", artist, title)
+func (r Resolver) DownloadOrGetSong(ctx context.Context, artist, title string) (string, error) {
+	outputDir := filepath.Join(r.cfg.Data, "Music", artist, title)
 	if err := os.MkdirAll(outputDir, folderPermission); err != nil {
 		return "", fmt.Errorf("could not create folder: %w", err)
 	}
