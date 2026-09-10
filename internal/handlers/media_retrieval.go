@@ -9,9 +9,12 @@ import (
 )
 
 func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		subsonic.WriteError(w, http.StatusBadRequest, s.cfg, subsonic.ErrParameterMissing, "id is required")
+		return
+	}
 
-	id := query.Get("id")
 	// TODO: support size
 
 	coverPath, err := s.iTunesClient.GetAlbumCover(id)

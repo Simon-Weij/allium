@@ -80,7 +80,6 @@ func Run() error {
 		router.Get("/search3.view", server.HandleSearch3)
 		router.Get("/getCoverArt.view", server.HandleGetCoverArt)
 		router.Get("/stream.view", server.HandleStream)
-		router.Get("/stream.view/", server.HandleStream)
 
 		// Browsing
 		router.Get("/getAlbum.view", server.HandleGetAlbum)

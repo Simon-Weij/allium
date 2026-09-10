@@ -28,10 +28,6 @@ func (r *statusRecorder) WriteHeader(status int) {
 }
 
 func (r *statusRecorder) Write(b []byte) (int, error) {
-	if r.status == 0 {
-		r.status = http.StatusOK
-	}
-
 	n, err := r.ResponseWriter.Write(b)
 	if err != nil {
 		return n, fmt.Errorf("failed to write response: %w", err)

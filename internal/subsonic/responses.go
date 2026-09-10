@@ -1,7 +1,9 @@
 package subsonic
 
 import (
+	"bytes"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -217,9 +219,15 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 
 func WriteJSON(w http.ResponseWriter, status int, body any) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
 
-	if err := json.NewEncoder(w).Encode(body); err != nil {
+	buf := &bytes.Buffer{}
+	if err := json.NewEncoder(buf).Encode(body); err != nil {
+		slog.Error("failed to encode JSON response", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
+
+		return
 	}
+
+	w.WriteHeader(status)
+	_, _ = w.Write(buf.Bytes())
 }
