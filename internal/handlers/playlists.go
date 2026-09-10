@@ -30,26 +30,26 @@ func (s Server) HandleCreatePlaylist(w http.ResponseWriter, r *http.Request) {
 	songIds := query["songId"]
 
 	if name == "" && playlistId == "" {
-		http.Error(w, "either name or playlistId is required", http.StatusBadRequest)
+		subsonic.WriteError(w, http.StatusBadRequest, s.cfg, subsonic.ErrParameterMissing, "either name or playlistId is required")
 		return
 	}
 
 	if err := validateSongIds(songIds); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		subsonic.WriteError(w, http.StatusBadRequest, s.cfg, subsonic.ErrParameterMissing, err.Error())
 		return
 	}
 
 	playlist, err := s.resolvePlaylist(ctx, name, username, playlistId)
 	if err != nil {
 		slog.Error("could not resolve playlist", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return
 	}
 
 	if err := s.addSongsToPlaylist(ctx, playlist, songIds, username); err != nil {
 		slog.Error("could not add songs to playlist", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return
 	}
@@ -70,7 +70,7 @@ func (s Server) HandleGetPlaylists(w http.ResponseWriter, r *http.Request) {
 	rows, err := s.queries.GetPlaylistsByUser(ctx, username)
 	if err != nil {
 		slog.Error("could not get playlists", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return
 	}
@@ -94,26 +94,26 @@ func (s Server) HandleGetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	id := query.Get("id")
 	if id == "" {
-		http.Error(w, "no id provided", http.StatusBadRequest)
+		subsonic.WriteError(w, http.StatusBadRequest, s.cfg, subsonic.ErrParameterMissing, "no id provided")
 		return
 	}
 
 	parsedId, err := strconv.Atoi(id)
 	if err != nil {
-		http.Error(w, errPlaylistIdNotNumber.Error(), http.StatusBadRequest)
+		subsonic.WriteError(w, http.StatusBadRequest, s.cfg, subsonic.ErrParameterMissing, errPlaylistIdNotNumber.Error())
 		return
 	}
 
 	playlist, err := s.queries.GetPlaylistByID(ctx, int64(parsedId))
 	if err != nil {
-		http.Error(w, "could not find playlist with id: "+id, http.StatusNotFound)
+		subsonic.WriteNotFound(w, s.cfg, "could not find playlist with id: "+id)
 		return
 	}
 
 	songs, err := s.queries.GetSongsByPlaylistID(ctx, id)
 	if err != nil {
 		slog.Error("could not get songs for playlist", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return
 	}
@@ -143,19 +143,19 @@ func (s Server) HandleUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	playlistId := query.Get("playlistId")
 	if playlistId == "" {
-		http.Error(w, "playlistId is required", http.StatusBadRequest)
+		subsonic.WriteError(w, http.StatusBadRequest, s.cfg, subsonic.ErrParameterMissing, "playlistId is required")
 		return
 	}
 
 	parsedId, err := strconv.Atoi(playlistId)
 	if err != nil {
-		http.Error(w, errPlaylistIdNotNumber.Error(), http.StatusBadRequest)
+		subsonic.WriteError(w, http.StatusBadRequest, s.cfg, subsonic.ErrParameterMissing, errPlaylistIdNotNumber.Error())
 		return
 	}
 
 	playlist, err := s.queries.GetPlaylistByID(ctx, int64(parsedId))
 	if err != nil {
-		http.Error(w, "could not find playlist with id: "+playlistId, http.StatusNotFound)
+		subsonic.WriteNotFound(w, s.cfg, "could not find playlist with id: "+playlistId)
 		return
 	}
 
@@ -219,7 +219,7 @@ func (s Server) updatePlaylistFromQuery(
 	})
 	if err != nil {
 		slog.Error("could not update playlist metadata", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return sqlc.Playlist{}, fmt.Errorf("could not update playlist metadata: %w", err)
 	}
@@ -234,13 +234,13 @@ func (s Server) handleAddSongsToUpdate(
 	songIdsToAdd []string,
 ) error {
 	if err := validateSongIds(songIdsToAdd); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		subsonic.WriteError(w, http.StatusBadRequest, s.cfg, subsonic.ErrParameterMissing, err.Error())
 		return err
 	}
 
 	if err := s.addSongsToPlaylist(ctx, playlist, songIdsToAdd, playlist.User); err != nil {
 		slog.Error("could not add songs to playlist", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return err
 	}
@@ -257,7 +257,7 @@ func (s Server) handleRemoveSongsFromPlaylist(
 	for _, idxStr := range songIndicesToRemove {
 		idx, err := strconv.Atoi(idxStr)
 		if err != nil {
-			http.Error(w, "songIndexToRemove must be a number", http.StatusBadRequest)
+			subsonic.WriteError(w, http.StatusBadRequest, s.cfg, subsonic.ErrParameterMissing, "songIndexToRemove must be a number")
 			return fmt.Errorf("songIndexToRemove must be a number: %w", err)
 		}
 
@@ -266,7 +266,7 @@ func (s Server) handleRemoveSongsFromPlaylist(
 			Position:   int64(idx),
 		}); err != nil {
 			slog.Error("could not remove song from playlist", "error", err)
-			http.Error(w, "internal server error", http.StatusInternalServerError)
+			subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 			return fmt.Errorf("could not remove song from playlist: %w", err)
 		}

@@ -199,6 +199,10 @@ func WriteError(w http.ResponseWriter, httpStatus int, cfg config.Config, code i
 	WriteJSON(w, httpStatus, res)
 }
 
+func WriteNotFound(w http.ResponseWriter, cfg config.Config, message string) {
+	WriteError(w, http.StatusNotFound, cfg, ErrNotFound, message)
+}
+
 func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 	return SubsonicResponseWrapper{
 		SubsonicResponse: Subsonic{

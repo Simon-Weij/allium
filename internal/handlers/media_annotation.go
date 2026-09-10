@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/Simon-Weij/allium/generated/sqlc"
+	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
 func (s Server) HandleScrobble(w http.ResponseWriter, r *http.Request) {
@@ -17,7 +18,7 @@ func (s Server) HandleScrobble(w http.ResponseWriter, r *http.Request) {
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
 		slog.Error("could not parse song id", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return
 	}
@@ -27,14 +28,14 @@ func (s Server) HandleScrobble(w http.ResponseWriter, r *http.Request) {
 	itunesSongs, err := s.iTunesClient.GetSongById(id)
 	if err != nil {
 		slog.Error("could not get song by id", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return
 	}
 
 	if len(itunesSongs.Results) == 0 {
 		slog.Info("no results found", "id", id)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteNotFound(w, s.cfg, "couldn't find song with id: "+id)
 
 		return
 	}
@@ -46,7 +47,7 @@ func (s Server) HandleScrobble(w http.ResponseWriter, r *http.Request) {
 	albumID, err := strconv.Atoi(song.AlbumId)
 	if err != nil {
 		slog.Error("could not parse album id", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return
 	}
@@ -54,7 +55,7 @@ func (s Server) HandleScrobble(w http.ResponseWriter, r *http.Request) {
 	artistID, err := strconv.Atoi(song.ArtistId)
 	if err != nil {
 		slog.Error("could not parse artist id", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return
 	}
@@ -75,8 +76,11 @@ func (s Server) HandleScrobble(w http.ResponseWriter, r *http.Request) {
 		ArtworkUrl: song.CoverArt,
 	}); err != nil {
 		slog.Error("could not update plays", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		subsonic.WriteError(w, http.StatusInternalServerError, s.cfg, subsonic.ErrGeneric, "internal server error")
 
 		return
 	}
+
+	response := subsonic.NewEmptyResponse(s.cfg)
+	subsonic.WriteJSON(w, http.StatusOK, response)
 }

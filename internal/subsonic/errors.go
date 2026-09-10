@@ -1,8 +1,10 @@
 package subsonic
 
 const (
-	ErrWrongCredentials                    = 20
+	ErrGeneric                              = 0
+	ErrParameterMissing                    = 10
+	ErrWrongCredentials                    = 40
 	ErrNotSupported                        = 42
 	ErrConflictingAuthenticationMechanisms = 43
-	ErrParameterMissing                    = 10
+	ErrNotFound                            = 70
 )
