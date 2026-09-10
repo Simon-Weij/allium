@@ -17,14 +17,12 @@ func (s Server) HandleGetCoverArt(w http.ResponseWriter, r *http.Request) {
 	coverPath, err := s.iTunesClient.GetAlbumCover(id)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
-
 		return
 	}
 
 	imageBytes, err := os.ReadFile(coverPath)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
-
 		return
 	}
 

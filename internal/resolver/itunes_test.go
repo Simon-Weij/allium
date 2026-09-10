@@ -53,8 +53,8 @@ func TestGetAlbumCover(t *testing.T) {
 
 		coverPath := filepath.Join(cfg.Data, "covers", "ab", "cd", "ef", "cover.jpg")
 
-		require.NoError(t, os.MkdirAll(filepath.Dir(coverPath), 0o755))
-		require.NoError(t, os.WriteFile(coverPath, []byte("art"), 0o644))
+		require.NoError(t, os.MkdirAll(filepath.Dir(coverPath), 0o700))
+		require.NoError(t, os.WriteFile(coverPath, []byte("art"), 0o600))
 
 		downloader.EXPECT().
 			DownloadAlbumCover(gomock.Any(), gomock.Any()).
@@ -82,7 +82,7 @@ func TestCreateDirs(t *testing.T) {
 	t.Run("should error when insufficient permissions", func(t *testing.T) {
 		t.Parallel()
 		testDir := t.TempDir()
-		err := os.Chmod(testDir, 0o444)
+		err := os.Chmod(testDir, 0o400)
 		require.NoError(t, err)
 
 		cfg := testutil.SetupTestingConfig(t)

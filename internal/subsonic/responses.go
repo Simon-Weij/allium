@@ -207,17 +207,6 @@ func NewEmptyResponse(cfg config.Config) SubsonicResponseWrapper {
 			Type:          config.Name,
 			ServerVersion: config.Version,
 			OpenSubsonic:  true,
-
-			License:                nil,
-			User:                   nil,
-			OpenSubSonicExtensions: nil,
-			SearchResult3:          nil,
-			Album:                  nil,
-			Artist:                 nil,
-			Playlist:               nil,
-			Playlists:              nil,
-
-			Error: nil,
 		},
 	}
 }

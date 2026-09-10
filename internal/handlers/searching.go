@@ -66,7 +66,6 @@ func parseQueries(w http.ResponseWriter, r *http.Request, client iTunesClient) *
 	searchQuery := query.Get("query")
 	if searchQuery == "" {
 		http.Error(w, "bad request", http.StatusBadRequest)
-
 		return nil
 	}
 
@@ -78,28 +77,24 @@ func parseQueries(w http.ResponseWriter, r *http.Request, client iTunesClient) *
 	queries.ArtistCount, err = queryInt(query, "artistCount")
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
-
 		return nil
 	}
 
 	queries.AlbumCount, err = queryInt(query, "albumCount")
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
-
 		return nil
 	}
 
 	queries.SongCount, err = queryInt(query, "songCount")
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
-
 		return nil
 	}
 
 	queries.SearchCount, err = queryInt(query, "searchCount")
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
-
 		return nil
 	}
 

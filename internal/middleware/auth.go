@@ -89,6 +89,5 @@ func isValidUser(
 
 func matchToken(storedPassword, salt, token string) bool {
 	sum := md5.Sum([]byte(storedPassword + salt))
-
 	return subtle.ConstantTimeCompare([]byte(hex.EncodeToString(sum[:])), []byte(token)) == 1
 }

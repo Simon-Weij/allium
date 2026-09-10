@@ -1,59 +1,51 @@
 version: "2"
 linters:
-  default: all
-  disable:
-    - wsl
-    - gomodguard
-    - depguard
-    - testpackage
-    - revive
-    - godox
-    - noinlineerr
-    - errchkjson
-    - tagliatelle
-    - gochecknoglobals
-    - exhaustruct
+  default: standard
+  enable:
+    - gosec
+    - wsl_v5
+    - gocritic
+    - varnamelen
+    - prealloc
+    - cyclop
+    - gocognit
+    - nestif
+    - misspell
+    - unconvert
+    - unparam
+    - wrapcheck
+    - nilnil
+    - nilnesserr
+    - errorlint
+    - mnd
+    - modernize
+    - decorder
+    - funcorder
+    - sloglint
+    - errname
+    - testifylint
+    - paralleltest
+    - thelper
   settings:
-    exhaustruct:
-      include:
-        - '^github\.com/Simon-Weij/allium(/.*)?\..+$'
-    errcheck:
-      exclude-functions:
-        - (io.Closer).Close
-        - (*database/sql.DB).Close
-        - (*database/sql.Rows).Close
-    copyloopvar:
-      check-alias: true
-    decorder:
-      disable-dec-order-check: false
     gosec:
       excludes:
+        - G104
+        - G304
         - G401
         - G501
-        - G304
         - G703
         - G705
-        - G104
     varnamelen:
-      ignore-decls:
-        - w http.ResponseWriter
-        - r *http.Request
       ignore-names:
-        - id
+        - w
+        - r
         - db
-    funlen:
-      lines: 80
+        - id
   exclusions:
     rules:
-      - path: '(.+)_test\.go'
+      - path: _test\.go
         linters:
-          - funlen
           - varnamelen
-          - noctx
-          - gosec
-          - wrapcheck
-          - err113
-          - goconst
-          - exhaustruct_v5
-          - musttag
-          - maintidx
+      - linters:
+          - errcheck
+        text: "Error return value of `.*\\.Close` is not checked"

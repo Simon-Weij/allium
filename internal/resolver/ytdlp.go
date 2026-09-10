@@ -26,7 +26,6 @@ func (m Metadata) DownloadOrGetSong(ctx context.Context, artist, title string) (
 	_, err := os.Stat(path)
 	if err == nil {
 		slog.Info("file found at " + path)
-
 		return path, nil
 	}
 
@@ -38,7 +37,6 @@ func (m Metadata) DownloadOrGetSong(ctx context.Context, artist, title string) (
 
 	if _, err := dlp.Run(ctx, fmt.Sprintf("ytsearch1: %s - %s", artist, title)); err != nil {
 		slog.Error("could not download "+artist+" by "+title, "error", err)
-
 		return "", fmt.Errorf("could not download %s: %w", title, err)
 	}
 

@@ -11,7 +11,6 @@ func (s Server) HandleGetAlbum(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		http.Error(w, "no id provided", http.StatusNotFound)
-
 		return
 	}
 
@@ -49,7 +48,6 @@ func (s Server) HandleGetArtist(w http.ResponseWriter, r *http.Request) {
 
 	if id == "" {
 		http.Error(w, "no id provided", http.StatusNotFound)
-
 		return
 	}
 

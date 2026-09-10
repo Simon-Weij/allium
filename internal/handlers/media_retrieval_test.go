@@ -35,7 +35,7 @@ func TestHandleGetCoverArt(t *testing.T) {
 			expectedType: "image/png",
 			setupMock: func(m *mocks.MockiTunesClient) {
 				coverPath := filepath.Join(t.TempDir(), "cover.png")
-				require.NoError(t, os.WriteFile(coverPath, []byte("cover-art"), 0o644))
+				require.NoError(t, os.WriteFile(coverPath, []byte("cover-art"), 0o600))
 				m.EXPECT().
 					GetAlbumCover("5").
 					Return(coverPath, nil)
@@ -117,7 +117,7 @@ func TestHandleStream(t *testing.T) {
 					}, nil)
 
 				songPath := filepath.Join(t.TempDir(), "song.mp3")
-				require.NoError(t, os.WriteFile(songPath, []byte("audio-content"), 0o644))
+				require.NoError(t, os.WriteFile(songPath, []byte("audio-content"), 0o600))
 
 				s.EXPECT().
 					DownloadOrGetSong(gomock.Any(), "Alice", "Test Song").

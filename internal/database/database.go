@@ -22,7 +22,6 @@ func InitialiseDatabase(ctx context.Context, dsn string) (*sql.DB, error) {
 
 	if err := db.PingContext(ctx); err != nil {
 		db.Close()
-
 		return nil, fmt.Errorf("could not ping database: %w", err)
 	}
 

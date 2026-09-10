@@ -31,13 +31,11 @@ func (s Server) HandleCreatePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	if name == "" && playlistId == "" {
 		http.Error(w, "either name or playlistId is required", http.StatusBadRequest)
-
 		return
 	}
 
 	if err := validateSongIds(songIds); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-
 		return
 	}
 
@@ -97,21 +95,18 @@ func (s Server) HandleGetPlaylist(w http.ResponseWriter, r *http.Request) {
 	id := query.Get("id")
 	if id == "" {
 		http.Error(w, "no id provided", http.StatusBadRequest)
-
 		return
 	}
 
 	parsedId, err := strconv.Atoi(id)
 	if err != nil {
 		http.Error(w, errPlaylistIdNotNumber.Error(), http.StatusBadRequest)
-
 		return
 	}
 
 	playlist, err := s.queries.GetPlaylistByID(ctx, int64(parsedId))
 	if err != nil {
 		http.Error(w, "could not find playlist with id: "+id, http.StatusNotFound)
-
 		return
 	}
 
@@ -133,11 +128,9 @@ func (s Server) HandleGetPlaylist(w http.ResponseWriter, r *http.Request) {
 		Id:        strconv.FormatInt(playlist.ID, 10),
 		Name:      playlist.Title,
 		Owner:     playlist.User,
-		Public:    false,
 		Created:   playlist.UpdatedAt,
 		Changed:   playlist.UpdatedAt,
 		SongCount: len(songs),
-		Duration:  0,
 		Entry:     entries,
 	}
 
@@ -151,21 +144,18 @@ func (s Server) HandleUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 	playlistId := query.Get("playlistId")
 	if playlistId == "" {
 		http.Error(w, "playlistId is required", http.StatusBadRequest)
-
 		return
 	}
 
 	parsedId, err := strconv.Atoi(playlistId)
 	if err != nil {
 		http.Error(w, errPlaylistIdNotNumber.Error(), http.StatusBadRequest)
-
 		return
 	}
 
 	playlist, err := s.queries.GetPlaylistByID(ctx, int64(parsedId))
 	if err != nil {
 		http.Error(w, "could not find playlist with id: "+playlistId, http.StatusNotFound)
-
 		return
 	}
 
@@ -245,7 +235,6 @@ func (s Server) handleAddSongsToUpdate(
 ) error {
 	if err := validateSongIds(songIdsToAdd); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-
 		return err
 	}
 
@@ -269,7 +258,6 @@ func (s Server) handleRemoveSongsFromPlaylist(
 		idx, err := strconv.Atoi(idxStr)
 		if err != nil {
 			http.Error(w, "songIndexToRemove must be a number", http.StatusBadRequest)
-
 			return fmt.Errorf("songIndexToRemove must be a number: %w", err)
 		}
 
@@ -333,9 +321,8 @@ func (s Server) createNewPlaylist(
 	name, username string,
 ) (sqlc.Playlist, error) {
 	createdPlaylist, err := s.queries.CreatePlaylist(ctx, sqlc.CreatePlaylistParams{
-		Title:     name,
-		Playcount: 0,
-		User:      username,
+		Title: name,
+		User:  username,
 	})
 	if err != nil {
 		return sqlc.Playlist{}, fmt.Errorf("could not create playlist: %w", err)
@@ -440,12 +427,9 @@ func buildPlaylistResponse(
 		Id:        strconv.FormatInt(playlist.ID, 10),
 		Name:      playlist.Title,
 		Owner:     playlist.User,
-		Public:    false,
 		Created:   playlist.UpdatedAt,
 		Changed:   playlist.UpdatedAt,
 		SongCount: len(songIds),
-		Duration:  0,
-		Entry:     nil,
 	}
 
 	return response
@@ -456,12 +440,9 @@ func convertPlaylistRow(row sqlc.GetPlaylistsByUserRow) subsonic.Playlist {
 		Id:        strconv.FormatInt(row.ID, 10),
 		Name:      row.Title,
 		Owner:     row.User,
-		Public:    false,
 		Created:   row.UpdatedAt,
 		Changed:   row.UpdatedAt,
 		SongCount: int(row.SongCount),
-		Duration:  0,
-		Entry:     nil,
 	}
 }
 
@@ -470,8 +451,6 @@ func convertSong(song sqlc.Song) subsonic.Song {
 		Id:           strconv.FormatInt(song.ID, 10),
 		Parent:       strconv.FormatInt(song.AlbumID, 10),
 		Title:        song.Title,
-		IsDir:        false,
-		IsVideo:      false,
 		Type:         songType,
 		AlbumId:      strconv.FormatInt(song.AlbumID, 10),
 		Album:        song.Album,
@@ -486,10 +465,8 @@ func convertSong(song sqlc.Song) subsonic.Song {
 		Track:        int(song.Track),
 		Year:         int(song.Year),
 		Genre:        song.Genre,
-		Size:         0,
 		DiscNumber:   int(song.DiscNumber),
 		Suffix:       songSuffix,
 		ContentType:  songContentType,
-		Path:         "",
 	}
 }

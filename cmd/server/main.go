@@ -99,22 +99,12 @@ func Run() error {
 	slog.Info("starting app...")
 
 	srv := &http.Server{
-		Addr:                         ":8000",
-		Handler:                      router,
-		DisableGeneralOptionsHandler: false,
-		TLSConfig:                    nil,
-		ReadTimeout:                  readTimeout,
-		ReadHeaderTimeout:            readHeaderTimeout,
-		WriteTimeout:                 writeTimeout,
-		IdleTimeout:                  idleTimeout,
-		MaxHeaderBytes:               0,
-		TLSNextProto:                 nil,
-		ConnState:                    nil,
-		ErrorLog:                     nil,
-		BaseContext:                  nil,
-		ConnContext:                  nil,
-		HTTP2:                        nil,
-		Protocols:                    nil,
+		Addr:              ":8000",
+		Handler:           router,
+		ReadTimeout:       readTimeout,
+		ReadHeaderTimeout: readHeaderTimeout,
+		WriteTimeout:      writeTimeout,
+		IdleTimeout:       idleTimeout,
 	}
 
 	if err := srv.ListenAndServe(); err != nil {

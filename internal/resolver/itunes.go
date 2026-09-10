@@ -52,10 +52,7 @@ var (
 func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
 	entities := []string{"song", "album", "musicArtist"}
 
-	final := &ITunesResponse{
-		ResultCount: 0,
-		Results:     nil,
-	}
+	final := &ITunesResponse{}
 
 	for _, entity := range entities {
 		var res ITunesResponse

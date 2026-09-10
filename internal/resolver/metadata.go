@@ -15,8 +15,6 @@ func NewMetadata(cfg config.Config) *Metadata {
 	metadata := &Metadata{
 		client: resty.New(),
 		cfg:    cfg,
-
-		downloader: nil,
 	}
 	metadata.downloader = metadata
 

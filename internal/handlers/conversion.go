@@ -50,24 +50,7 @@ func convertItunesAlbum(response *resolver.ITunesResponse) subsonic.GetAlbumAlbu
 	}
 
 	if len(songs) == 0 {
-		return subsonic.GetAlbumAlbum{
-			Id:        "",
-			Parent:    "",
-			Album:     "",
-			Title:     "",
-			Name:      "",
-			IsDir:     false,
-			CoverArt:  "",
-			SongCount: 0,
-			Created:   "",
-			Duration:  0,
-			PlayCount: 0,
-			ArtistId:  "",
-			Artist:    "",
-			Year:      0,
-			Genre:     "",
-			Song:      nil,
-		}
+		return subsonic.GetAlbumAlbum{}
 	}
 
 	song := songs[0]
@@ -121,24 +104,22 @@ func convertItunesArtist(response *resolver.ITunesResponse) subsonic.GetArtistAr
 
 func convertItunesArtistAlbum(result resolver.ITunesResult) subsonic.GetArtistAlbum {
 	return subsonic.GetArtistAlbum{
-		Id:            strconv.Itoa(result.CollectionID),
-		Parent:        strconv.Itoa(result.ArtistID),
-		Album:         result.CollectionName,
-		Title:         result.CollectionName,
-		Name:          result.CollectionName,
-		IsDir:         true,
-		CoverArt:      result.ArtworkURL100,
-		SongCount:     result.TrackCount,
-		Created:       result.ReleaseDate,
-		Duration:      albumDurationPlaceholder,
-		PlayCount:     albumPlayCountPlaceholder,
-		ArtistId:      strconv.Itoa(result.ArtistID),
-		Artist:        result.ArtistName,
-		Year:          parseYear(result.ReleaseDate),
-		Genre:         result.PrimaryGenreName,
-		UserRating:    userRatingPlaceholder,
-		AverageRating: 0,
-		Starred:       "",
+		Id:         strconv.Itoa(result.CollectionID),
+		Parent:     strconv.Itoa(result.ArtistID),
+		Album:      result.CollectionName,
+		Title:      result.CollectionName,
+		Name:       result.CollectionName,
+		IsDir:      true,
+		CoverArt:   result.ArtworkURL100,
+		SongCount:  result.TrackCount,
+		Created:    result.ReleaseDate,
+		Duration:   albumDurationPlaceholder,
+		PlayCount:  albumPlayCountPlaceholder,
+		ArtistId:   strconv.Itoa(result.ArtistID),
+		Artist:     result.ArtistName,
+		Year:       parseYear(result.ReleaseDate),
+		Genre:      result.PrimaryGenreName,
+		UserRating: userRatingPlaceholder,
 	}
 }
 
@@ -147,8 +128,6 @@ func convertItunesSong(result resolver.ITunesResult) subsonic.Song {
 		Id:           strconv.Itoa(result.TrackID),
 		Parent:       strconv.Itoa(result.CollectionID),
 		Title:        result.TrackName,
-		IsDir:        false,
-		IsVideo:      false,
 		Type:         songType,
 		AlbumId:      strconv.Itoa(result.CollectionID),
 		Album:        result.CollectionName,
@@ -158,7 +137,6 @@ func convertItunesSong(result resolver.ITunesResult) subsonic.Song {
 		Duration:     result.TrackTimeMillis / millisPerSecond,
 		BitRate:      songBitRate,
 		BitDepth:     songBitDepth,
-		Size:         0,
 		SamplingRate: songSamplingRate,
 		ChannelCount: songChannelCount,
 		Track:        result.TrackNumber,
@@ -172,14 +150,10 @@ func convertItunesSong(result resolver.ITunesResult) subsonic.Song {
 }
 
 func parseYear(dateString string) int {
-	var year int
-
 	t, err := time.Parse(time.RFC3339, dateString)
 	if err != nil {
-		year = 0
-	} else {
-		year = t.Year()
+		return 0
 	}
 
-	return year
+	return t.Year()
 }
