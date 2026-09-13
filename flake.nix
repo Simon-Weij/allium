@@ -18,6 +18,7 @@
           sqlc
           mockgen
           gotestsum
+          oapi-codegen
         ];
       };
     });

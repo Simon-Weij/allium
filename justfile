@@ -28,3 +28,5 @@ create-migration name:
     goose -dir internal/database/migrations create {{name}} sql
 generate:
     go generate ./...
+oapi:
+    oapi-codegen -config .oapi-codegen.yml conf/openapi.json
