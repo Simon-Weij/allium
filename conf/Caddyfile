@@ -1,4 +1,9 @@
 :8080 {
+    handle /docs* {
+        root * /srv
+        file_server
+    }
+
     handle /rest* {
         reverse_proxy app:8000
     }
