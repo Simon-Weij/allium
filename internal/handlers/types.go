@@ -5,11 +5,13 @@ import (
 
 	"github.com/Simon-Weij/allium/generated/sqlc"
 	"github.com/Simon-Weij/allium/internal/resolver"
+	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
 //go:generate mockgen -source=types.go -destination=../../generated/mocks/itunes_mock.go -package=mocks -exclude_interfaces=Queries,SongDownloader
 type iTunesClient interface {
 	SearchWithItunes(query string) (*resolver.ITunesResponse, error)
+	SearchAlbums(size, offset int, sortByName bool) ([]subsonic.AlbumID3, error)
 	GetAlbumMetadata(albumId string) (*resolver.ITunesResponse, error)
 	GetArtistById(artistId string) (*resolver.ITunesResponse, error)
 	GetSongById(id string) (*resolver.ITunesResponse, error)

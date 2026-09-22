@@ -67,7 +67,7 @@ func WithLogging(next http.Handler) http.Handler {
 			cyan,
 			strconv.Quote(r.Method),
 			reset,
-			strconv.Quote(r.URL.Path),
+			strconv.Quote(r.URL.RequestURI()),
 			statusColor(statusRecorder.status),
 			statusRecorder.status,
 			reset,

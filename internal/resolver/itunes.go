@@ -3,9 +3,15 @@ package resolver
 import (
 	"errors"
 	"fmt"
+	"math/rand/v2"
 	"os"
 	"path/filepath"
+	"sort"
+	"strconv"
 	"strings"
+	"time"
+
+	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
 type (
@@ -34,9 +40,11 @@ type (
 )
 
 const (
-	baseSearchUrl = "https://itunes.apple.com/search"
-	baseLookupUrl = "https://itunes.apple.com/lookup"
-	coverArtSize  = "1600x1600bb.jpg"
+	baseSearchUrl             = "https://itunes.apple.com/search"
+	baseLookupUrl             = "https://itunes.apple.com/lookup"
+	coverArtSize              = "1600x1600bb.jpg"
+	albumDurationPlaceholder  = 30000
+	albumPlayCountPlaceholder = 8
 )
 
 const (
@@ -73,7 +81,81 @@ func (m Metadata) SearchWithItunes(query string) (*ITunesResponse, error) {
 	return final, nil
 }
 
-// GetAlbumCover gets its id from the itunes url for getting album covers.
+func (m Metadata) SearchAlbums(size, offset int, sortByName bool) ([]subsonic.AlbumID3, error) {
+	var res ITunesResponse
+	if _, err := m.client.R().
+		SetQueryParam("term", randomSearchTerm()).
+		SetQueryParam("media", "music").
+		SetQueryParam("entity", "album").
+		SetQueryParam("limit", strconv.Itoa(offset+size+1)).
+		SetResponseForceContentType("application/json").
+		SetResult(&res).
+		Get(baseSearchUrl); err != nil {
+		return nil, fmt.Errorf("failed to fetch albums: %w", err)
+	}
+
+	if sortByName {
+		sort.Slice(res.Results, func(i, j int) bool {
+			return strings.ToLower(res.Results[i].CollectionName) < strings.ToLower(res.Results[j].CollectionName)
+		})
+	}
+
+	return convertAlbumResults(res.Results, offset, size), nil
+}
+
+func convertAlbumResults(results []ITunesResult, offset, size int) []subsonic.AlbumID3 {
+	start := min(offset, len(results))
+	end := min(start+size, len(results))
+
+	albums := make([]subsonic.AlbumID3, 0, end-start)
+	for _, result := range results[start:end] {
+		albums = append(albums, convertItunesAlbumID3(result))
+	}
+
+	return albums
+}
+
+func randomSearchTerm() string {
+	const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+	return string(alphabet[rand.IntN(len(alphabet))])
+}
+
+func convertItunesAlbumID3(result ITunesResult) subsonic.AlbumID3 {
+	return subsonic.AlbumID3{
+		Id:        strconv.Itoa(result.CollectionID),
+		Name:      result.CollectionName,
+		Artist:    result.ArtistName,
+		Year:      parseDateYear(result.ReleaseDate),
+		CoverArt:  result.ArtworkURL100,
+		Starred:   result.ReleaseDate,
+		Duration:  albumDurationPlaceholder,
+		PlayCount: albumPlayCountPlaceholder,
+		Genre:     result.PrimaryGenreName,
+		Created:   result.ReleaseDate,
+		ArtistId:  strconv.Itoa(result.ArtistID),
+		SongCount: result.TrackCount,
+	}
+}
+
+func parseDate(dateString string) (*time.Time, error) {
+	time, err := time.Parse(time.RFC3339, dateString)
+	if err != nil {
+		return nil, fmt.Errorf("could not get time: %w", err)
+	}
+
+	return &time, nil
+}
+
+func parseDateYear(dateString string) int {
+	t, err := parseDate(dateString)
+	if err != nil {
+		return 0
+	}
+
+	return t.Year()
+}
+
 func (m Metadata) GetAlbumCover(id string) (string, error) {
 	dataDir := filepath.Join(m.cfg.Data, "covers")
 
@@ -165,8 +247,6 @@ func coverArtURL(artworkURL string) (string, error) {
 	return artworkURL[:index+1] + coverArtSize, nil
 }
 
-// Create dirs according to a string where every 2 characters create a new directory.
-// It returns the relative path of the deepest directory created.
 func (m Metadata) createDirs(baseDirs, str string) (string, error) {
 	var relativeDir string
 

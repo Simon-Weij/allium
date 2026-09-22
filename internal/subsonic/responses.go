@@ -29,6 +29,7 @@ type (
 		Artist                 *GetArtistArtist         `json:"artist,omitempty"`
 		Playlist               *Playlist                `json:"playlist,omitempty"`
 		Playlists              *Playlists               `json:"playlists,omitempty"`
+		AlbumList2             *AlbumList2              `json:"albumList2,omitempty"`
 		Error                  *Error                   `json:"error,omitempty"`
 	}
 
@@ -187,6 +188,25 @@ type (
 		AlbumCount     int    `json:"albumCount,omitempty"`
 		UserRating     int    `json:"userRating,omitempty"`
 		ArtistImageUrl string `json:"artistImageUrl,omitempty"`
+	}
+
+	AlbumList2 struct {
+		Album []AlbumID3 `json:"album,omitempty"`
+	}
+
+	AlbumID3 struct {
+		Id        string `json:"id"`
+		Name      string `json:"name"`
+		Artist    string `json:"artist"`
+		Year      int    `json:"year"`
+		CoverArt  string `json:"coverArt"`
+		Starred   string `json:"starred"`
+		Duration  int    `json:"duration"`
+		PlayCount int    `json:"playCount"`
+		Genre     string `json:"genre"`
+		Created   string `json:"created"`
+		ArtistId  string `json:"artistId"`
+		SongCount int    `json:"songCount"`
 	}
 )
 

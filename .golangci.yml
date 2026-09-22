@@ -35,6 +35,7 @@ linters:
         - G501
         - G703
         - G705
+        - G404
     varnamelen:
       ignore-names:
         - w

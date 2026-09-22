@@ -85,6 +85,9 @@ func Run() error {
 		router.Get("/getAlbum.view", server.HandleGetAlbum)
 		router.Get("/getArtist.view", server.HandleGetArtist)
 
+		// Lists
+		router.Get("/getAlbumList2.view", server.HandleGetAlbumList2)
+
 		// Media annotation
 		router.Get("/scrobble.view", server.HandleScrobble)
 
