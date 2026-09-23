@@ -39,7 +39,7 @@ func (s Server) HandleGetAlbumList2(w http.ResponseWriter, r *http.Request) {
 	var albums []subsonic.AlbumID3
 
 	switch listType {
-	case "random":
+	case "random", "newest", "highest", "frequent", "recent", "alphabeticalByArtist", "starred", "byGenre", "byYear":
 		const searchByName = false
 
 		albums, err = s.iTunesClient.SearchAlbums(size, offset, searchByName)
