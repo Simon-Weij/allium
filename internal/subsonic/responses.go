@@ -21,8 +21,8 @@ type (
 		ServerVersion          string                   `json:"serverVersion"`
 		OpenSubsonic           bool                     `json:"openSubsonic"`
 		License                *License                 `json:"license,omitempty"`
-		User                   *sqlc.User               `json:"user,omitempty"`
-		Users *[]sqlc.User `json:"users,omitempty"`
+		User                   *sqlc.GetUserRow               `json:"user,omitempty"`
+		Users *[]sqlc.GetUsersRow `json:"users,omitempty"`
 		OpenSubSonicExtensions *[]OpenSubSonicExtension `json:"openSubsonicExtensions,omitempty"`
 		SearchResult3          *SearchResult3           `json:"searchResult3,omitempty"`
 		Album                  *GetAlbumAlbum           `json:"album,omitempty"`

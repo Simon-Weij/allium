@@ -1,9 +1,9 @@
 -- name: GetUser :one
-SELECT DISTINCT * FROM users
+SELECT DISTINCT username, email, scrobbling_enabled, admin_role, settings_role, download_role, upload_role, playlist_role, cover_art_role, comment_role, podcast_role, stream_role, jukebox_role, share_role, video_conversion_role, avatar_last_changed, folder, max_bit_rate FROM users
 WHERE username = ?;
 
 -- name: GetUsers :many
-SELECT * FROM users;
+SELECT username, email, scrobbling_enabled, admin_role, settings_role, download_role, upload_role, playlist_role, cover_art_role, comment_role, podcast_role, stream_role, jukebox_role, share_role, video_conversion_role, avatar_last_changed, folder, max_bit_rate FROM users;
 
 -- name: CreateUser :exec
 INSERT INTO users (
@@ -45,3 +45,7 @@ INSERT INTO users (
     ?,
     ?
 );
+
+-- name: GetPassword :one 
+SELECT password FROM users 
+WHERE username = ?;

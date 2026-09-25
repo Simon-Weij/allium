@@ -19,7 +19,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-var mockUserResponse = &sqlc.User{
+var mockUserResponse = &sqlc.GetUserRow{
 			Username:            "gopher",
 			Email:               "gopher@example.com",
 			ScrobblingEnabled:   true,
@@ -73,7 +73,7 @@ func TestHandleGetUser(t *testing.T) {
 				m.EXPECT().
 					GetUserByUsername(context.Background(), "someoneFake").
 					Return(
-						&sqlc.User{},
+						&sqlc.GetUserRow{},
 						errors.New("user not found :("),
 					)
 			},
@@ -109,8 +109,8 @@ func TestHandleGetUser(t *testing.T) {
 
 
 
-var mockUsersResponse = &[]sqlc.User{
-	sqlc.User{
+var mockUsersResponse = &[]sqlc.GetUsersRow{
+	{
 			Username:            "gopher",
 			Email:               "gopher@example.com",
 			ScrobblingEnabled:   true,
@@ -126,7 +126,7 @@ var mockUsersResponse = &[]sqlc.User{
 			JukeboxRole:         false,
 			ShareRole:           true,
 			VideoConversionRole: false,
-		},
+	},
 }
 
 func TestHandleGetUsers(t *testing.T) {
@@ -159,7 +159,7 @@ func TestHandleGetUsers(t *testing.T) {
 				m.EXPECT().
 					GetUsers(context.Background()).
 					Return(
-						&[]sqlc.User{},
+						&[]sqlc.GetUsersRow{},
 						errors.New("users table empty :("),
 					)
 			},

@@ -1,16 +1,24 @@
 package middleware
 
 import (
+	"context"
 	"crypto/md5"
 	"crypto/subtle"
+	"database/sql"
 	"encoding/hex"
+	"errors"
+	"fmt"
+	"log/slog"
 	"net/http"
 
+	"github.com/Simon-Weij/allium/generated/sqlc"
 	"github.com/Simon-Weij/allium/internal/config"
 	"github.com/Simon-Weij/allium/internal/subsonic"
 )
 
-func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
+var ErrInvalidCreds = errors.New("Invalid Username or Password")
+
+func Authenticate(cfg config.Config, queries *sqlc.Queries) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			query := r.URL.Query()
@@ -61,30 +69,51 @@ func Authenticate(cfg config.Config) func(http.Handler) http.Handler {
 				return
 			}
 
-			isValidUser(w, cfg, username, salt, token)
-
+			err := isValidUser(r.Context(), username, salt, token, queries)
+			if errors.Is(err, ErrInvalidCreds) {
+				subsonic.WriteError(
+					w,
+					http.StatusUnauthorized,
+					cfg,
+					subsonic.ErrWrongCredentials,
+					"Wrong username or password",
+				)
+				return 
+			}
+			if err != nil {
+				subsonic.WriteError(w, http.StatusInternalServerError, cfg, subsonic.ErrGeneric, "generic error when trying to authenticate")
+				slog.Error("error recieved when trying to authenticate", "username", username, "err: ", err)
+			}
+			
 			next.ServeHTTP(w, r)
 		})
 	}
 }
 
 func isValidUser(
-	w http.ResponseWriter,
-	cfg config.Config,
+	ctx context.Context,
 	username,
 	salt,
 	token string,
-) {
-	isValidUser := subtle.ConstantTimeCompare([]byte(cfg.Username), []byte(username)) == 1
-	if !isValidUser || !matchToken(cfg.Password, salt, token) {
-		subsonic.WriteError(
-			w,
-			http.StatusUnauthorized,
-			cfg,
-			subsonic.ErrWrongCredentials,
-			"Wrong username or password",
-		)
+	queries *sqlc.Queries,
+) error {
+	
+	_, err := queries.GetUser(ctx, username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return ErrInvalidCreds
+		}	
+		return fmt.Errorf("error recieved trying to authenticate %w", err)
 	}
+
+	password, err := queries.GetPassword(ctx, username)
+	if err != nil {
+		return fmt.Errorf("error recieved trying to authenticate %w", err)
+	}
+	if !matchToken(password, salt, token) {
+		return ErrInvalidCreds
+	}
+	return nil
 }
 
 func matchToken(storedPassword, salt, token string) bool {

@@ -64,7 +64,7 @@ func Run() error {
 
 	router := chi.NewRouter()
 	router.Use(middleware.WithLogging)
-	router.Use(middleware.Authenticate(*cfg))
+	router.Use(middleware.Authenticate(*cfg, queries))
 
 	router.Route("/rest", func(router chi.Router) {
 		// System
